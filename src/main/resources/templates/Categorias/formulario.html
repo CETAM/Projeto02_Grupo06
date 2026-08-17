@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title th:text="${categoria.id == null}
+            ? 'Cadastro de Categoria'
+            : 'Editar Categoria'">
+
+        Cadastro de Categoria
+
+    </title>
+
+
+    <!-- Bootstrap -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+
+    <!-- CSS -->
+
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+</head>
+
+
+<body class="bg-light">
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a
+                class="navbar-brand"
+                th:href="@{/}">
+
+            <i class="bi bi-box-seam me-2"></i>
+
+            Sistema de Pedidos
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- CONTEÚDO -->
+
+<div class="container mt-5 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+
+                    <h4
+                            class="mb-0"
+                            th:text="${categoria.id == null}
+                            ? 'Cadastrar Categoria'
+                            : 'Editar Categoria'">
+
+                        Cadastro de Categoria
+
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form
+                            th:action="@{/categorias/salvar}"
+                            th:object="${categoria}"
+                            method="post">
+
+
+                        <!-- ID -->
+
+                        <input
+                                type="hidden"
+                                th:field="*{id}">
+
+
+                        <!-- NOME -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Nome
+                            </label>
+
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    th:field="*{nome}"
+                                    maxlength="100"
+                                    placeholder="Digite o nome da categoria"
+                                    required>
+
+                        </div>
+
+
+                        <!-- DESCRIÇÃO -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Descrição
+                            </label>
+
+                            <textarea
+                                    class="form-control"
+                                    th:field="*{descricao}"
+                                    rows="4"
+                                    placeholder="Digite uma descrição para a categoria">
+                            </textarea>
+
+                        </div>
+
+
+                        <!-- BOTÕES -->
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button
+                                    type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-check-lg me-1"></i>
+
+                                Salvar
+
+                            </button>
+
+
+                            <a
+                                    th:href="@{/categorias}"
+                                    class="btn btn-secondary">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+
+                                Voltar para Categorias
+
+                            </a>
+
+
+                            <a
+                                    th:href="@{/}"
+                                    class="btn btn-outline-dark">
+
+                                <i class="bi bi-house-door me-1"></i>
+
+                                Página inicial
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>
