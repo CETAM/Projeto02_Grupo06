@@ -39,4 +39,9 @@ public class RelatorioService {
     public List<Pedido> buscarPedidosPorCliente(Integer clienteId) {
         return pedidoRepository.buscarPedidosPorCliente(clienteId); // Usado para montar a tabela
     }
+
+    // --- METODO DE VENDAS POR PERÍODO ---
+    public List<Pedido> buscarVendasPorPeriodo(java.time.LocalDateTime inicio, java.time.LocalDateTime fim) {
+        return pedidoRepository.buscarVendasPorPeriodo(inicio, fim);
+    }
 }

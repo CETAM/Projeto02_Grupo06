@@ -40,4 +40,28 @@ public class RelatorioController {
 
         return "Relatorios/pedidos-cliente";
     }
+
+    // NOVA ROTA: Relatório de Vendas por Período
+    @GetMapping("/vendas-periodo")
+    public String relatorioVendasPeriodo(
+            @RequestParam(name = "dataInicio", required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate dataInicio,
+            @RequestParam(name = "dataFim", required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate dataFim,
+            Model model) {
+
+        // Se o usuário preencheu as duas datas no filtro
+        if (dataInicio != null && dataFim != null) {
+
+            // Converte a data inicial para as 00:00:00 e a final para as 23:59:59
+            java.time.LocalDateTime inicio = dataInicio.atStartOfDay();
+            java.time.LocalDateTime fim = dataFim.atTime(java.time.LocalTime.MAX);
+
+            model.addAttribute("pedidos", relatorioService.buscarVendasPorPeriodo(inicio, fim));
+
+            // Devolve as datas para a tela para os campos não ficarem em branco após filtrar
+            model.addAttribute("dataInicio", dataInicio);
+            model.addAttribute("dataFim", dataFim);
+        }
+
+        return "Relatorios/vendas-periodo";
+    }
 }
