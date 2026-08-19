@@ -9,7 +9,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
 
-    <title>Sistema de Controle de Pedidos</title>
+    <title>Painel | Sistema de Controle de Pedidos</title>
 
     <!-- Bootstrap -->
     <link
@@ -21,6 +21,11 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
     <!-- CSS do projeto -->
     <link
             rel="stylesheet"
@@ -28,421 +33,274 @@
 
 </head>
 
-<body class="bg-light">
+<body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-dark bg-dark">
+<div class="app-shell">
 
-    <div class="container-fluid">
+    <!-- SIDEBAR -->
+    <div
+            class="offcanvas offcanvas-start"
+            tabindex="-1"
+            id="sidebar"
+            aria-labelledby="sidebarLabel">
 
-        <button
-                class="btn btn-dark"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#sidebar"
-                aria-controls="sidebar">
-
-            <i class="bi bi-list fs-4"></i>
-
-        </button>
-
-        <a
-                class="navbar-brand"
-                th:href="@{/}">
-
-            <i class="bi bi-box-seam me-2"></i>
-
-            Sistema de Pedidos
-
+        <a class="sidebar-brand" th:href="@{/}">
+            <span class="brand-icon"><i class="bi bi-box-seam-fill"></i></span>
+            <span id="sidebarLabel">Sistema de Pedidos</span>
         </a>
 
-    </div>
+        <p class="sidebar-section-label">Menu principal</p>
 
-</nav>
+        <nav class="sidebar-nav">
 
-<!-- SIDEBAR -->
-<div
-        class="offcanvas offcanvas-start"
-        tabindex="-1"
-        id="sidebar">
-
-    <div class="offcanvas-header">
-
-        <h5 class="offcanvas-title">
-
-            <i class="bi bi-grid me-2"></i>
-
-            Menu Principal
-
-        </h5>
-
-        <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="offcanvas"
-                aria-label="Fechar">
-        </button>
-
-    </div>
-
-    <div class="offcanvas-body">
-
-        <div class="list-group list-group-flush">
-
-            <a
-                    th:href="@{/}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-house-door me-2"></i>
-
-                Início
-
+            <a th:href="@{/}" class="active">
+                <i class="bi bi-grid-fill"></i>
+                Painel
             </a>
 
-            <a
-                    th:href="@{/clientes}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-people me-2"></i>
-
+            <a th:href="@{/clientes}">
+                <i class="bi bi-people"></i>
                 Clientes
-
             </a>
 
-            <a
-                    th:href="@{/produtos}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-box me-2"></i>
-
+            <a th:href="@{/produtos}">
+                <i class="bi bi-box"></i>
                 Produtos
-
             </a>
 
-            <a
-                    th:href="@{/categorias}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-tags me-2"></i>
-
+            <a th:href="@{/categorias}">
+                <i class="bi bi-tags"></i>
                 Categorias
-
             </a>
 
-            <a
-                    th:href="@{/pedidos}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-cart me-2"></i>
-
+            <a th:href="@{/pedidos}">
+                <i class="bi bi-cart"></i>
                 Pedidos
-
             </a>
 
-            <a
-                    th:href="@{/relatorios/estoque}"
-                    class="list-group-item list-group-item-action">
+        </nav>
 
-                <i class="bi bi-boxes me-2"></i>
+        <p class="sidebar-section-label">Relatórios</p>
 
+        <nav class="sidebar-nav">
+
+            <a th:href="@{/relatorios/estoque}">
+                <i class="bi bi-boxes"></i>
                 Controle de Estoque
-
             </a>
 
-            <!-- NOVOS LINKS DA SIDEBAR -->
-            <a
-                    th:href="@{/relatorios/pedidos-cliente}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-person-lines-fill me-2"></i>
-
+            <a th:href="@{/relatorios/pedidos-cliente}">
+                <i class="bi bi-person-lines-fill"></i>
                 Pedidos por Cliente
-
             </a>
 
-            <a
-                    th:href="@{/relatorios/vendas-periodo}"
-                    class="list-group-item list-group-item-action">
-
-                <i class="bi bi-calendar-range me-2"></i>
-
+            <a th:href="@{/relatorios/vendas-periodo}">
+                <i class="bi bi-calendar-range"></i>
                 Vendas por Período
-
             </a>
+
+        </nav>
+
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <button
+                    class="btn-menu"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebar"
+                    aria-controls="sidebar"
+                    aria-label="Abrir menu">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+            <p class="breadcrumb-eyebrow">
+                Sistema de Pedidos / <span class="current">Painel</span>
+            </p>
 
         </div>
+
+        <main class="dashboard">
+
+            <header class="dashboard-header mb-2">
+                <h1>Painel</h1>
+                <p>Visão geral de clientes, pedidos e estoque</p>
+            </header>
+
+            <!-- KPIs -->
+            <section class="kpi-row">
+
+                <div class="kpi-card accent-blue">
+                    <i class="bi bi-people-fill kpi-icon"></i>
+                    <span class="kpi-label">Clientes ativos</span>
+                    <span class="kpi-value" th:text="${totalClientesAtivos}">0</span>
+                </div>
+
+                <div class="kpi-card accent-amber">
+                    <i class="bi bi-cart-check-fill kpi-icon"></i>
+                    <span class="kpi-label">Pedidos no mês</span>
+                    <span class="kpi-value" th:text="${totalPedidosMes}">0</span>
+                </div>
+
+                <div class="kpi-card accent-teal">
+                    <i class="bi bi-cash-coin kpi-icon"></i>
+                    <span class="kpi-label">Faturamento no mês</span>
+                    <span class="kpi-value" th:text="|R$ ${#numbers.formatDecimal(faturamentoMes, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</span>
+                </div>
+
+                <div class="kpi-card accent-coral">
+                    <i class="bi bi-exclamation-triangle-fill kpi-icon"></i>
+                    <span class="kpi-label">Produtos em falta</span>
+                    <span class="kpi-value" th:text="${totalProdutosEmFalta}">0</span>
+                </div>
+
+            </section>
+
+            <!-- GRÁFICO + ALERTA DE ESTOQUE -->
+            <section class="panel-row">
+
+                <div class="panel-card">
+                    <h2 class="panel-card-title">Vendas dos últimos 7 dias</h2>
+                    <p class="panel-card-subtitle">Valor total de pedidos por dia</p>
+                    <canvas id="vendasChart" height="110"></canvas>
+                </div>
+
+                <div class="panel-card">
+                    <h2 class="panel-card-title">Alerta de estoque</h2>
+                    <p class="panel-card-subtitle">Produtos esgotados agora</p>
+
+                    <div th:if="${totalProdutosEmFalta == 0}" class="stock-ok">
+                        <i class="bi bi-check-circle-fill fs-4 d-block mb-2"></i>
+                        Estoque normalizado
+                    </div>
+
+                    <div th:if="${totalProdutosEmFalta > 0}">
+                        <p class="mb-3" style="font-size:0.85rem; color: var(--text-muted);">
+                            <span th:text="${totalProdutosEmFalta}"></span> produto(s) esgotado(s) no momento.
+                        </p>
+                        <a th:href="@{/relatorios/estoque}" class="btn btn-sm" style="background: var(--coral-soft); color: var(--coral); font-weight: 600;">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            Ver relatório completo
+                        </a>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ACESSO RÁPIDO -->
+            <section>
+
+                <h2 class="quick-access-title">Acesso rápido</h2>
+
+                <div class="quick-grid">
+
+                    <a th:href="@{/clientes}" class="quick-card accent-blue">
+                        <span class="quick-card-icon"><i class="bi bi-people"></i></span>
+                        <h3>Clientes</h3>
+                        <p>Cadastre, consulte, altere e exclua clientes.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                    <a th:href="@{/produtos}" class="quick-card accent-amber">
+                        <span class="quick-card-icon"><i class="bi bi-box"></i></span>
+                        <h3>Produtos</h3>
+                        <p>Gerencie os produtos disponíveis no sistema.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                    <a th:href="@{/categorias}" class="quick-card accent-amber">
+                        <span class="quick-card-icon"><i class="bi bi-tags"></i></span>
+                        <h3>Categorias</h3>
+                        <p>Organize os produtos disponíveis por categorias.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                    <a th:href="@{/pedidos}" class="quick-card accent-blue">
+                        <span class="quick-card-icon"><i class="bi bi-cart"></i></span>
+                        <h3>Pedidos</h3>
+                        <p>Cadastre e acompanhe os pedidos dos clientes.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                    <a th:href="@{/relatorios/estoque}" class="quick-card accent-coral">
+                        <span class="quick-card-icon"><i class="bi bi-boxes"></i></span>
+                        <h3>Estoque</h3>
+                        <p>Consulte e acompanhe as movimentações do estoque.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                    <a th:href="@{/relatorios/vendas-periodo}" class="quick-card accent-teal">
+                        <span class="quick-card-icon"><i class="bi bi-bar-chart"></i></span>
+                        <h3>Relatórios</h3>
+                        <p>Vendas por período e histórico de pedidos por cliente.</p>
+                        <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
 
     </div>
 
 </div>
 
-<!-- CONTEÚDO PRINCIPAL -->
-<main class="container py-5">
-
-    <header class="mb-5">
-
-        <h1 class="fw-bold">
-            Página inicial
-        </h1>
-
-        <p class="text-muted">
-            Sistema de Controle de Clientes e Pedidos
-        </p>
-
-    </header>
-
-    <div class="row g-4">
-
-        <!-- CLIENTES -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-people fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Clientes
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Gerenciamento de clientes
-                    </small>
-
-                    <p class="card-text">
-                        Cadastre, consulte, altere e exclua clientes.
-                    </p>
-
-                    <div class="mt-auto">
-
-                        <a
-                                th:href="@{/clientes}"
-                                class="btn btn-primary">
-
-                            Acessar Clientes
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- PRODUTOS -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-box fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Produtos
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Gerenciamento de produtos
-                    </small>
-
-                    <p class="card-text">
-                        Gerencie os produtos disponíveis no sistema.
-                    </p>
-
-                    <div class="mt-auto">
-
-                        <a
-                                th:href="@{/produtos}"
-                                class="btn btn-primary">
-
-                            Acessar Produtos
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- CATEGORIAS -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-tags fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Categorias
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Organização de produtos
-                    </small>
-
-                    <p class="card-text">
-                        Organize os produtos disponíveis por categorias.
-                    </p>
-
-                    <div class="mt-auto">
-
-                        <a
-                                th:href="@{/categorias}"
-                                class="btn btn-primary">
-
-                            Acessar Categorias
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- PEDIDOS -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-cart fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Pedidos
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Gerenciamento de pedidos
-                    </small>
-
-                    <p class="card-text">
-                        Cadastre e acompanhe os pedidos dos clientes.
-                    </p>
-
-                    <div class="mt-auto">
-
-                        <a
-                                th:href="@{/pedidos}"
-                                class="btn btn-primary">
-
-                            Acessar Pedidos
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- ESTOQUE -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-boxes fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Estoque
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Controle de estoque
-                    </small>
-
-                    <p class="card-text">
-                        Consulte e acompanhe as movimentações do estoque.
-                    </p>
-
-                    <div class="mt-auto">
-
-                        <a
-                                th:href="@{/relatorios/estoque}"
-                                class="btn btn-primary">
-
-                            Acessar Estoque
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- RELATÓRIOS (ATUALIZADO) -->
-        <div class="col-12 col-sm-6 col-lg-4">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-body d-flex flex-column">
-
-                    <i class="bi bi-bar-chart fs-1 mb-3"></i>
-
-                    <h5 class="card-title">
-                        Relatórios
-                    </h5>
-
-                    <small class="text-muted mb-3">
-                        Indicadores do sistema
-                    </small>
-
-                    <p class="card-text">
-                        Consulte as vendas por período e o histórico de pedidos por cliente.
-                    </p>
-
-                    <!-- AGORA COM DOIS BOTÕES -->
-                    <div class="mt-auto d-flex flex-column gap-2">
-
-                        <a
-                                th:href="@{/relatorios/pedidos-cliente}"
-                                class="btn btn-primary btn-sm">
-
-                            <i class="bi bi-person-lines-fill me-1"></i> Pedidos por Cliente
-
-                        </a>
-
-                        <a
-                                th:href="@{/relatorios/vendas-periodo}"
-                                class="btn btn-primary btn-sm">
-
-                            <i class="bi bi-calendar-range me-1"></i> Vendas por Período
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</main>
-
 <!-- Bootstrap JS -->
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script th:inline="javascript">
+    const chartLabels = /*[[${chartLabels}]]*/ [];
+    const chartValues = /*[[${chartValues}]]*/ [];
+
+    const ctx = document.getElementById('vendasChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Vendas (R$)',
+                data: chartValues,
+                backgroundColor: '#E8873A',
+                borderRadius: 6,
+                maxBarThickness: 42
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#E7E8EF' },
+                    ticks: {
+                        callback: function (value) {
+                            return 'R$ ' + value;
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
 </script>
 
 </body>

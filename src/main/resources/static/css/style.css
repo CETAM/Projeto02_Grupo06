@@ -1,186 +1,460 @@
-/* ==============================
-   CONFIGURAÇÕES GERAIS
-   ============================== */
+/* ==============================================================
+   DESIGN TOKENS
+   Paleta: navy profundo (estrutura) + amber (acento operacional,
+   ligado ao tema de "caixas/pedidos") + teal (positivo) + coral (alerta)
+   Tipografia: Space Grotesk (display) + Inter (corpo) + IBM Plex Mono (dados)
+   ============================================================== */
+
+:root {
+    --ink-900: #12172B;
+    --ink-800: #1B2140;
+    --ink-700: #262D52;
+
+    --canvas: #F5F6FA;
+    --card: #FFFFFF;
+
+    --amber: #E8873A;
+    --amber-dark: #C56A22;
+    --amber-soft: #FCEEE0;
+
+    --teal: #1F9E89;
+    --teal-soft: #E4F5F1;
+
+    --coral: #E5484D;
+    --coral-soft: #FCE9E9;
+
+    --blue: #3D6FE0;
+    --blue-soft: #E9EFFD;
+
+    --text-strong: #171A2B;
+    --text-muted: #6B7180;
+    --text-faint: #9CA1B0;
+
+    --border: #E7E8EF;
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+
+    --sidebar-w: 264px;
+}
+
+* {
+    box-sizing: border-box;
+}
 
 body {
-    background-color: #f5f6f8;
-    color: #212529;
+    background-color: var(--canvas);
+    color: var(--text-strong);
+    font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--text-strong);
 }
 
 
-/* ==============================
-   NAVBAR
-   ============================== */
+/* ==============================================================
+   APP SHELL
+   ============================================================== */
 
-.navbar-sistema {
-    background-color: #212529;
-    min-height: 70px;
-    padding: 0 2rem;
-}
-
-.navbar-brand {
-    font-size: 1.4rem;
-    font-weight: 500;
-}
-
-.menu-button {
-    color: white;
-    font-size: 1.8rem;
-}
-
-.menu-button:hover {
-    color: #d9d9d9;
+.app-shell {
+    display: flex;
+    min-height: 100vh;
 }
 
 
-/* ==============================
+/* ==============================================================
    SIDEBAR
-   ============================== */
+   Reaproveita o componente offcanvas do Bootstrap para o mobile;
+   em telas >=992px ele vira uma coluna fixa e persistente.
+   ============================================================== */
 
-.menu-lateral {
+#sidebar.offcanvas {
+    background-color: var(--ink-900);
+    color: #fff;
+    width: var(--sidebar-w);
+    border-right: none;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.75rem 1.5rem 1.25rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+}
+
+.sidebar-brand .brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--amber);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.sidebar-section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6B7396;
+    padding: 0 1.5rem;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
+    padding: 0 0.75rem;
 }
 
-.menu-lateral a {
-    color: #343a40;
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: #C4C8DC;
     text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 8px;
-    transition: 0.2s;
+    font-size: 0.92rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.menu-lateral a i {
-    width: 28px;
-    display: inline-block;
+.sidebar-nav a i {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
 }
 
-.menu-lateral a:hover {
-    background-color: #f0f2f5;
-    color: #0d6efd;
+.sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.sidebar-nav a.active {
+    background-color: var(--amber);
+    color: var(--ink-900);
+    font-weight: 600;
+}
+
+@media (min-width: 992px) {
+    #sidebar.offcanvas {
+        position: sticky;
+        top: 0;
+        left: 0;
+        transform: none;
+        visibility: visible;
+        height: 100vh;
+        flex-shrink: 0;
+    }
 }
 
 
-/* ==============================
-   DASHBOARD
-   ============================== */
+/* ==============================================================
+   TOPBAR
+   ============================================================== */
+
+.topbar {
+    background-color: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.topbar .btn-menu {
+    color: var(--text-strong);
+    font-size: 1.4rem;
+    border: none;
+    background: none;
+    padding: 0.25rem 0.4rem;
+}
+
+.breadcrumb-eyebrow {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin: 0;
+}
+
+.breadcrumb-eyebrow .current {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+@media (min-width: 992px) {
+    .topbar .btn-menu {
+        display: none;
+    }
+}
+
+
+/* ==============================================================
+   MAIN CONTENT
+   ============================================================== */
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
 
 .dashboard {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-}
-
-
-/* ==============================
-   CABEÇALHO
-   ============================== */
-
-.dashboard-header {
-    margin-bottom: 3rem;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 1240px;
+    margin: 0 auto;
 }
 
 .dashboard-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 1.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
 }
 
 .dashboard-header p {
-    color: #6c757d;
-    font-size: 1.1rem;
+    color: var(--text-muted);
     margin: 0;
 }
 
 
-/* ==============================
-   CARDS
-   ============================== */
+/* ==============================================================
+   KPI CARDS
+   Assinatura visual: numero em mono (estilo etiqueta de remessa)
+   com barra de acento lateral e rotulo em uppercase pequeno.
+   ============================================================== */
 
-.dashboard-card {
-    background-color: white;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
-    padding: 25px;
-
-    height: 100%;
-
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-
-    transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease;
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.75rem 0;
 }
 
-.dashboard-card:hover {
-    transform: translateY(-4px);
-
-    box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.10);
+@media (max-width: 992px) {
+    .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-
-/* ==============================
-   ÍCONES
-   ============================== */
-
-.card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
+@media (max-width: 576px) {
+    .kpi-row {
+        grid-template-columns: 1fr;
+    }
 }
 
+.kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--kpi-accent, var(--amber));
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
 
-/* ==============================
-   TEXTOS DOS CARDS
-   ============================== */
-
-.dashboard-card h3 {
-    font-size: 1.4rem;
+.kpi-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
     font-weight: 600;
-    margin-bottom: 3px;
 }
 
-.dashboard-card span {
-    display: block;
-    color: #6c757d;
-    margin-bottom: 20px;
+.kpi-value {
+    font-family: var(--font-mono);
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--text-strong);
+    line-height: 1.1;
 }
 
-.dashboard-card p {
-    min-height: 48px;
-    margin-bottom: 20px;
-}
-
-
-/* ==============================
-   BOTÕES
-   ============================== */
-
-.dashboard-card .btn {
-    padding: 9px 16px;
+.kpi-icon {
+    align-self: flex-end;
+    margin-top: -2.4rem;
+    font-size: 1.1rem;
+    color: var(--kpi-accent, var(--amber));
+    opacity: 0.55;
 }
 
 
-/* ==============================
-   RESPONSIVIDADE
-   ============================== */
+/* ==============================================================
+   PAINÉIS (GRÁFICO + ESTOQUE)
+   ============================================================== */
 
-@media (max-width: 768px) {
+.panel-row {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
 
-    .navbar-sistema {
-        padding: 0 1rem;
+@media (max-width: 992px) {
+    .panel-row {
+        grid-template-columns: 1fr;
     }
-
-    .navbar-brand {
-        font-size: 1.1rem;
-    }
-
-    .dashboard {
-        padding-top: 2.5rem;
-    }
-
-    .dashboard-header h1 {
-        font-size: 2rem;
-    }
-
 }
+
+.panel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.4rem;
+}
+
+.panel-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.panel-card-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.stock-alert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.86rem;
+}
+
+.stock-alert-item:last-child {
+    border-bottom: none;
+}
+
+.stock-alert-name {
+    font-weight: 500;
+    color: var(--text-strong);
+}
+
+.stock-alert-cat {
+    color: var(--text-faint);
+    font-size: 0.78rem;
+}
+
+.stock-alert-badge {
+    background: var(--coral-soft);
+    color: var(--coral);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.stock-ok {
+    text-align: center;
+    color: var(--teal);
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+
+/* ==============================================================
+   QUICK ACCESS CARDS
+   ============================================================== */
+
+.quick-access-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 992px) {
+    .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.quick-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.quick-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(18, 23, 43, 0.08);
+    border-color: var(--qc-accent, var(--amber));
+}
+
+.quick-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 0.9rem;
+    background: var(--qc-accent-soft, var(--amber-soft));
+    color: var(--qc-accent, var(--amber-dark));
+}
+
+.quick-card h3 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.quick-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.quick-card .quick-card-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--qc-accent, var(--amber-dark));
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.quick-card.accent-blue { --qc-accent: var(--blue); --qc-accent-soft: var(--blue-soft); }
+.quick-card.accent-amber { --qc-accent: var(--amber-dark); --qc-accent-soft: var(--amber-soft); }
+.quick-card.accent-teal { --qc-accent: var(--teal); --qc-accent-soft: var(--teal-soft); }
+.quick-card.accent-coral { --qc-accent: var(--coral); --qc-accent-soft: var(--coral-soft); }
+
+.kpi-card.accent-blue { --kpi-accent: var(--blue); }
+.kpi-card.accent-amber { --kpi-accent: var(--amber); }
+.kpi-card.accent-teal { --kpi-accent: var(--teal); }
+.kpi-card.accent-coral { --kpi-accent: var(--coral); }
