@@ -1,0 +1,186 @@
+/* ==============================
+   CONFIGURAÇÕES GERAIS
+   ============================== */
+
+body {
+    background-color: #f5f6f8;
+    color: #212529;
+}
+
+
+/* ==============================
+   NAVBAR
+   ============================== */
+
+.navbar-sistema {
+    background-color: #212529;
+    min-height: 70px;
+    padding: 0 2rem;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.menu-button {
+    color: white;
+    font-size: 1.8rem;
+}
+
+.menu-button:hover {
+    color: #d9d9d9;
+}
+
+
+/* ==============================
+   SIDEBAR
+   ============================== */
+
+.menu-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu-lateral a {
+    color: #343a40;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.menu-lateral a i {
+    width: 28px;
+    display: inline-block;
+}
+
+.menu-lateral a:hover {
+    background-color: #f0f2f5;
+    color: #0d6efd;
+}
+
+
+/* ==============================
+   DASHBOARD
+   ============================== */
+
+.dashboard {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+
+/* ==============================
+   CABEÇALHO
+   ============================== */
+
+.dashboard-header {
+    margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.dashboard-header p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+
+/* ==============================
+   CARDS
+   ============================== */
+
+.dashboard-card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 25px;
+
+    height: 100%;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.10);
+}
+
+
+/* ==============================
+   ÍCONES
+   ============================== */
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+
+/* ==============================
+   TEXTOS DOS CARDS
+   ============================== */
+
+.dashboard-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.dashboard-card span {
+    display: block;
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.dashboard-card p {
+    min-height: 48px;
+    margin-bottom: 20px;
+}
+
+
+/* ==============================
+   BOTÕES
+   ============================== */
+
+.dashboard-card .btn {
+    padding: 9px 16px;
+}
+
+
+/* ==============================
+   RESPONSIVIDADE
+   ============================== */
+
+@media (max-width: 768px) {
+
+    .navbar-sistema {
+        padding: 0 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .dashboard {
+        padding-top: 2.5rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+}

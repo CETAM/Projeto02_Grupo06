@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title th:text="${cliente.id == null}
+            ? 'Cadastro de Cliente'
+            : 'Editar Cliente'">
+        Cadastro de Cliente
+    </title>
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- CSS do projeto -->
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+</head>
+
+<body class="bg-light">
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           th:href="@{/}">
+
+            <i class="bi bi-box-seam me-2"></i>
+
+            Sistema de Pedidos
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- CONTEÚDO -->
+
+<div class="container mt-5 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+
+                    <h4 class="mb-0"
+                        th:text="${cliente.id == null}
+                        ? 'Cadastrar Cliente'
+                        : 'Editar Cliente'">
+
+                        Cadastro de Cliente
+
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form
+                            th:action="@{/clientes/salvar}"
+                            th:object="${cliente}"
+                            method="post">
+
+
+                        <!-- ID -->
+
+                        <input
+                                type="hidden"
+                                th:field="*{id}">
+
+
+                        <!-- NOME -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Nome
+                            </label>
+
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    th:field="*{nome}"
+                                    maxlength="150"
+                                    required>
+
+                        </div>
+
+
+                        <!-- E-MAIL -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                E-mail
+                            </label>
+
+                            <input
+                                    type="email"
+                                    class="form-control"
+                                    th:field="*{email}"
+                                    maxlength="100"
+                                    required>
+
+                        </div>
+
+
+                        <!-- TELEFONE E CEP -->
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Telefone
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        th:field="*{telefone}"
+                                        maxlength="20">
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    CEP
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        th:field="*{cep}"
+                                        maxlength="10">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ENDEREÇO -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Endereço
+                            </label>
+
+                            <textarea
+                                    class="form-control"
+                                    th:field="*{endereco}"
+                                    rows="3">
+                            </textarea>
+
+                        </div>
+
+
+                        <!-- CIDADE E ESTADO -->
+
+                        <div class="row">
+
+                            <div class="col-md-8 mb-3">
+
+                                <label class="form-label">
+                                    Cidade
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        th:field="*{cidade}"
+                                        maxlength="100">
+
+                            </div>
+
+
+                            <div class="col-md-4 mb-3">
+
+                                <label class="form-label">
+                                    Estado
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        th:field="*{estado}"
+                                        maxlength="2"
+                                        placeholder="AM">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="form-check mb-4">
+
+                            <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    th:field="*{ativo}">
+
+                            <label class="form-check-label">
+                                Cliente ativo
+                            </label>
+
+                        </div>
+
+
+                        <!-- BOTÕES -->
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button
+                                    type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="bi bi-check-lg me-1"></i>
+
+                                Salvar
+
+                            </button>
+
+
+                            <a
+                                    th:href="@{/clientes}"
+                                    class="btn btn-secondary">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+
+                                Voltar para Clientes
+
+                            </a>
+
+
+                            <a
+                                    th:href="@{/}"
+                                    class="btn btn-outline-dark">
+
+                                <i class="bi bi-house-door me-1"></i>
+
+                                Página inicial
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
