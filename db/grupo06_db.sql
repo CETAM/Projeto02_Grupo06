@@ -1,6 +1,6 @@
-/*CREATE DATABASE IF NOT EXISTS sistema_controle_pedidos;
+/*CREATE DATABASE IF NOT EXISTS grupo06_db;
 -- Conectar ao banco de dados
- USE sistema_controle_pedidos;
+ USE grupo06_db;
 
 -- Tabela de Categorias
 CREATE TABLE categorias (
