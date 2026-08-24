@@ -1,4 +1,4 @@
-/*CREATE DATABASE IF NOT EXISTS grupo06_db;
+CREATE DATABASE IF NOT EXISTS grupo06_db;
 -- Conectar ao banco de dados
  USE grupo06_db;
 
@@ -175,8 +175,6 @@ INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, sub
 INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
 (4, 5, 1, 25.00, 25.00);*/
 
-
-select * from ;
 
 
 
