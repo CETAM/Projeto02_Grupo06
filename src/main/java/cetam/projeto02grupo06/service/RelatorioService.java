@@ -81,6 +81,23 @@ public class RelatorioService {
         return produtoRepository.buscarProdutosEmFalta().size();
     }
 
+    // --- MÉTODOS DA CENTRAL DE RELATÓRIOS (cartões-resumo do hub) ---
+
+    public long contarClientesCadastrados() {
+        return clienteRepository.count();
+    }
+
+    // Faturamento somado nos últimos 30 dias (usado no cartão-resumo de Vendas por Período)
+    public BigDecimal calcularFaturamentoUltimos30Dias() {
+        LocalDateTime inicio = LocalDate.now().minusDays(29).atStartOfDay();
+        LocalDateTime fim = LocalDate.now().atTime(23, 59, 59);
+
+        return pedidoRepository.buscarVendasPorPeriodo(inicio, fim).stream()
+                .map(Pedido::getValorTotal)
+                .filter(v -> v != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     // Vendas dos últimos 7 dias (para o gráfico do dashboard)
     public Map<String, BigDecimal> buscarVendasUltimos7Dias() {
         LocalDateTime inicio = LocalDate.now().minusDays(6).atStartOfDay();

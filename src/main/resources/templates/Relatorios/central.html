@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Central de Relatórios | Sistema de Controle de Pedidos</title>
+
+    <!-- Evita "flash" de tema errado antes do CSS carregar -->
+    <script>
+        (function () {
+            var salvo = localStorage.getItem('spd-theme');
+            document.documentElement.setAttribute('data-theme', salvo === 'dark' ? 'dark' : 'light');
+        })();
+    </script>
+
+    <!-- Bootstrap -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <!-- CSS do projeto -->
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <div th:replace="~{fragments/layout :: sidebar('central-relatorios')}"></div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+        <div th:replace="~{fragments/layout :: topbar('Central de Relatórios')}"></div>
+
+        <main class="dashboard">
+
+            <header class="dashboard-header mb-2">
+                <h1>Central de Relatórios</h1>
+                <p>Escolha um relatório para consultar em detalhe e imprimir</p>
+            </header>
+
+            <section class="report-hub-grid mt-4">
+
+                <!-- CARTÃO: CONTROLE DE ESTOQUE -->
+                <div class="report-hub-card accent-coral">
+
+                    <span class="report-hub-card-icon"><i class="bi bi-boxes"></i></span>
+
+                    <h3>Controle de Estoque</h3>
+                    <p>Produtos esgotados ou com quantidade zerada no momento.</p>
+
+                    <span class="report-hub-metric" th:text="${totalProdutosEmFalta}">0</span>
+                    <span class="report-hub-metric-label">item(ns) em falta</span>
+
+                    <a th:href="@{/relatorios/estoque}" class="report-hub-link">
+                        Ver relatório <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+                <!-- CARTÃO: PEDIDOS POR CLIENTE -->
+                <div class="report-hub-card accent-blue">
+
+                    <span class="report-hub-card-icon"><i class="bi bi-person-lines-fill"></i></span>
+
+                    <h3>Pedidos por Cliente</h3>
+                    <p>Histórico de pedidos de um cliente específico.</p>
+
+                    <span class="report-hub-metric" th:text="${totalClientesCadastrados}">0</span>
+                    <span class="report-hub-metric-label">clientes cadastrados</span>
+
+                    <a th:href="@{/relatorios/pedidos-cliente}" class="report-hub-link">
+                        Ver relatório <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+                <!-- CARTÃO: VENDAS POR PERÍODO -->
+                <div class="report-hub-card accent-teal">
+
+                    <span class="report-hub-card-icon"><i class="bi bi-calendar-range"></i></span>
+
+                    <h3>Vendas por Período</h3>
+                    <p>Histórico de vendas dentro de um intervalo de datas.</p>
+
+                    <span class="report-hub-metric"
+                          th:text="|R$ ${#numbers.formatDecimal(faturamento30Dias, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</span>
+                    <span class="report-hub-metric-label">faturados nos últimos 30 dias</span>
+
+                    <a th:href="@{/relatorios/vendas-periodo}" class="report-hub-link">
+                        Ver relatório <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<!-- Toggle de tema -->
+<script th:src="@{/js/theme.js}"></script>
+
+</body>
+</html>

@@ -3,113 +3,202 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Relatório de Pedidos por Cliente</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Pedidos por Cliente | Sistema de Controle de Pedidos</title>
+
+    <!-- Evita "flash" de tema errado antes do CSS carregar -->
+    <script>
+        (function () {
+            var salvo = localStorage.getItem('spd-theme');
+            document.documentElement.setAttribute('data-theme', salvo === 'dark' ? 'dark' : 'light');
+        })();
+    </script>
+
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
     <!-- CSS do projeto -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link
+            rel="stylesheet"
+            th:href="@{/css/style.css}">
+
 </head>
 
-<body class="bg-light">
+<body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/}">
-            <i class="bi bi-box-seam me-2"></i> Sistema de Pedidos
-        </a>
-    </div>
-</nav>
+<div class="app-shell">
 
-<!-- CONTEÚDO -->
-<div class="container mt-5 mb-5">
+    <!-- SIDEBAR -->
+    <div th:replace="~{fragments/layout :: sidebar('pedidos-cliente')}"></div>
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div>
-            <h2 class="mb-1"><i class="bi bi-person-lines-fill me-2"></i>Pedidos por Cliente</h2>
-            <p class="text-muted mb-0">Consulte o histórico de pedidos de um cliente específico.</p>
-        </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a th:href="@{/}" class="btn btn-outline-secondary">
-                <i class="bi bi-house-door me-1"></i> Início
-            </a>
-            <button onclick="window.print()" class="btn btn-primary">
-                <i class="bi bi-printer me-1"></i> Imprimir Relatório
-            </button>
-        </div>
-    </div>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
 
-    <!-- CAIXA DE FILTRO -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body bg-white">
-            <form th:action="@{/relatorios/pedidos-cliente}" method="get" class="row align-items-end g-3">
-                <div class="col-md-8">
-                    <label for="clienteId" class="form-label fw-bold">Selecione o Cliente:</label>
-                    <select id="clienteId" name="clienteId" class="form-select" required>
-                        <option value="" disabled th:selected="${clienteSelecionado == null}">-- Escolha um cliente --</option>
-                        <!-- Preenche as opções com os clientes do banco -->
-                        <option th:each="cliente : ${clientes}"
-                                th:value="${cliente.id}"
-                                th:text="${cliente.nome}"
-                                th:selected="${clienteSelecionado == cliente.id}">
-                        </option>
-                    </select>
+        <!-- TOPBAR -->
+        <div th:replace="~{fragments/layout :: topbar('Pedidos por Cliente')}"></div>
+
+        <main class="dashboard">
+
+            <div class="list-header">
+
+                <div>
+                    <h1>Pedidos por Cliente</h1>
+                    <p>Consulte o histórico de pedidos de um cliente específico</p>
                 </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-dark w-100">
-                        <i class="bi bi-funnel me-1"></i> Filtrar Pedidos
+
+                <div class="d-flex flex-wrap gap-2 no-print">
+
+                    <a th:href="@{/}" class="btn-app-outline">
+                        <i class="bi bi-house-door"></i>
+                        Início
+                    </a>
+
+                    <a th:href="@{/relatorios}" class="btn-app-outline">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        Relatórios
+                    </a>
+
+                    <button
+                            type="button"
+                            class="btn-app-primary"
+                            th:disabled="${pedidos == null}"
+                            onclick="window.print()">
+
+                        <i class="bi bi-printer"></i>
+                        Imprimir Relatório
+
                     </button>
+
                 </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- TABELA DE RESULTADOS (Só aparece se o usuário filtrou algo) -->
-    <div class="card shadow" th:if="${pedidos != null}">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Nº do Pedido</th>
-                        <th>Data do Pedido</th>
-                        <th>Data de Entrega</th>
-                        <th>Status</th>
-                        <th>Valor Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="pedido : ${pedidos}">
-                        <td class="fw-bold" th:text="${pedido.id}"></td>
-
-                        <!-- Formatação de datas usando o #temporals do Thymeleaf -->
-                        <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td th:text="${pedido.dataEntrega != null ? #temporals.format(pedido.dataEntrega, 'dd/MM/yyyy HH:mm') : 'Não definida'}"></td>
-
-                        <td>
-                            <span class="badge bg-primary" th:text="${pedido.status}"></span>
-                        </td>
-
-                        <td class="text-success fw-bold" th:text="|R$ ${pedido.valorTotal}|"></td>
-                    </tr>
-
-                    <!-- Mensagem caso o cliente selecionado não tenha nenhum pedido -->
-                    <tr th:if="${#lists.isEmpty(pedidos)}">
-                        <td colspan="5" class="text-center text-muted py-4 fs-5">
-                            <i class="bi bi-inbox me-2"></i> Este cliente ainda não possui nenhum pedido registrado.
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
-        </div>
+
+            <!-- FILTRO -->
+            <form
+                    th:action="@{/relatorios/pedidos-cliente}"
+                    method="get"
+                    class="list-toolbar no-print">
+
+                <select id="clienteId" name="clienteId" class="list-filter-select" style="flex:1;" required>
+                    <option value="" disabled th:selected="${clienteSelecionado == null}">-- Escolha um cliente --</option>
+                    <option th:each="cliente : ${clientes}"
+                            th:value="${cliente.id}"
+                            th:text="${cliente.nome}"
+                            th:selected="${clienteSelecionado == cliente.id}">
+                    </option>
+                </select>
+
+                <button type="submit" class="btn-app-primary">
+                    <i class="bi bi-funnel"></i>
+                    Filtrar Pedidos
+                </button>
+
+            </form>
+
+            <!-- ESTADO INICIAL: nenhum cliente filtrado ainda -->
+            <div th:if="${pedidos == null}" class="alert-inline">
+                <i class="bi bi-info-circle"></i>
+                <span>Selecione um cliente acima para consultar o histórico de pedidos.</span>
+            </div>
+
+            <!-- RESULTADO (só aparece depois que o usuário filtrou) -->
+            <div th:if="${pedidos != null}">
+
+                <!-- CONTEXTO DO RESULTADO -->
+                <p class="text-muted mb-3">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Cliente: <strong th:text="${nomeClienteSelecionado}">-</strong>
+                    &mdash; <span th:text="${#lists.size(pedidos)}">0</span> pedido(s) encontrado(s).
+                </p>
+
+                <!-- TABELA -->
+                <div class="app-table-card">
+
+                    <div class="table-responsive">
+
+                        <table class="app-table">
+
+                            <thead>
+                            <tr>
+                                <th>Nº do Pedido</th>
+                                <th>Data do Pedido</th>
+                                <th>Data de Entrega</th>
+                                <th>Status</th>
+                                <th>Valor Total</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <tr th:each="pedido : ${pedidos}">
+
+                                <td th:text="${pedido.id}"></td>
+
+                                <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${pedido.dataEntrega != null ? #temporals.format(pedido.dataEntrega, 'dd/MM/yyyy HH:mm') : 'Não definida'}"></td>
+
+                                <td>
+                                    <span th:if="${pedido.status == 'Pendente'}" class="pill pill-warning" th:text="${pedido.status}"></span>
+                                    <span th:if="${pedido.status == 'Confirmado' or pedido.status == 'Enviado'}" class="pill pill-info" th:text="${pedido.status}"></span>
+                                    <span th:if="${pedido.status == 'Entregue'}" class="pill pill-success" th:text="${pedido.status}"></span>
+                                    <span th:if="${pedido.status == 'Cancelado'}" class="pill pill-danger" th:text="${pedido.status}"></span>
+                                </td>
+
+                                <td>
+                                    <span class="price-value"
+                                          th:text="|R$ ${#numbers.formatDecimal(pedido.valorTotal, 1, 'POINT', 2, 'COMMA')}|"></span>
+                                </td>
+
+                            </tr>
+
+                            <!-- Mensagem caso o cliente selecionado não tenha nenhum pedido -->
+                            <tr th:if="${#lists.isEmpty(pedidos)}">
+                                <td colspan="5">
+                                    <div class="app-empty-state">
+                                        <i class="bi bi-inbox"></i>
+                                        Este cliente ainda não possui nenhum pedido registrado.
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
     </div>
 
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Toggle de tema -->
+<script th:src="@{/js/theme.js}"></script>
 
 </body>
 </html>
