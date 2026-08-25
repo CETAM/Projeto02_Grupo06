@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- ==============================================================
+     SIDEBAR (fragmento reutilizável)
+     Parâmetro "active": painel | clientes | produtos | categorias |
+     pedidos | central-relatorios | estoque | pedidos-cliente | vendas-periodo
+     ============================================================== -->
+
+<div
+        th:fragment="sidebar(active)"
+        class="offcanvas offcanvas-start"
+        tabindex="-1"
+        id="sidebar"
+        aria-labelledby="sidebarLabel">
+
+    <a class="sidebar-brand" th:href="@{/}">
+        <span class="brand-icon"><i class="bi bi-box-seam-fill"></i></span>
+        <span id="sidebarLabel">Sistema de Pedidos</span>
+    </a>
+
+    <p class="sidebar-section-label">Menu principal</p>
+
+    <nav class="sidebar-nav">
+
+        <a th:href="@{/}" th:classappend="${active == 'painel'} ? ' active' : ''">
+            <i class="bi bi-grid-fill"></i>
+            Painel
+        </a>
+
+        <a th:href="@{/clientes}" th:classappend="${active == 'clientes'} ? ' active' : ''">
+            <i class="bi bi-people"></i>
+            Clientes
+        </a>
+
+        <a th:href="@{/produtos}" th:classappend="${active == 'produtos'} ? ' active' : ''">
+            <i class="bi bi-box"></i>
+            Produtos
+        </a>
+
+        <a th:href="@{/categorias}" th:classappend="${active == 'categorias'} ? ' active' : ''">
+            <i class="bi bi-tags"></i>
+            Categorias
+        </a>
+
+        <a th:href="@{/pedidos}" th:classappend="${active == 'pedidos'} ? ' active' : ''">
+            <i class="bi bi-cart"></i>
+            Pedidos
+        </a>
+
+    </nav>
+
+    <p class="sidebar-section-label">Relatórios</p>
+
+    <nav class="sidebar-nav">
+
+        <a th:href="@{/relatorios}" th:classappend="${active == 'central-relatorios'} ? ' active' : ''">
+            <i class="bi bi-speedometer2"></i>
+            Central de Relatórios
+        </a>
+
+        <a th:href="@{/relatorios/estoque}" th:classappend="${active == 'estoque'} ? ' active' : ''">
+            <i class="bi bi-boxes"></i>
+            Controle de Estoque
+        </a>
+
+        <a th:href="@{/relatorios/pedidos-cliente}" th:classappend="${active == 'pedidos-cliente'} ? ' active' : ''">
+            <i class="bi bi-person-lines-fill"></i>
+            Pedidos por Cliente
+        </a>
+
+        <a th:href="@{/relatorios/vendas-periodo}" th:classappend="${active == 'vendas-periodo'} ? ' active' : ''">
+            <i class="bi bi-calendar-range"></i>
+            Vendas por Período
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- ==============================================================
+     TOPBAR (fragmento reutilizável)
+     Parâmetro "pagina": texto exibido no breadcrumb
+     ============================================================== -->
+
+<div th:fragment="topbar(pagina)" class="topbar">
+
+    <button
+            class="btn-menu"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#sidebar"
+            aria-controls="sidebar"
+            aria-label="Abrir menu">
+
+        <i class="bi bi-list"></i>
+
+    </button>
+
+    <p class="breadcrumb-eyebrow">
+        Sistema de Pedidos / <span class="current" th:text="${pagina}">Painel</span>
+    </p>
+
+    <button
+            type="button"
+            id="themeToggleBtn"
+            class="btn-theme-toggle"
+            aria-label="Alternar tema claro/escuro">
+
+        <i id="themeToggleIcon" class="bi bi-moon-stars"></i>
+
+    </button>
+
+</div>
+
+</body>
+</html>
