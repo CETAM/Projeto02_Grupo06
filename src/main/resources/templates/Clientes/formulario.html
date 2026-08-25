@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -11,36 +10,27 @@
           content="width=device-width, initial-scale=1">
 
     <title th:text="${cliente.id == null}
-            ? 'Cadastrar Cliente'
+            ? 'Cadastro de Cliente'
             : 'Editar Cliente'">
-
-        Cliente
-
+        Cadastro de Cliente
     </title>
 
-
     <!-- Bootstrap -->
-
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
             rel="stylesheet">
 
-
     <!-- Bootstrap Icons -->
-
     <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-
-    <!-- CSS -->
-
+    <!-- CSS do projeto -->
     <link
             rel="stylesheet"
             th:href="@{/css/style.css}">
 
 </head>
-
 
 <body class="bg-light">
 
@@ -51,9 +41,8 @@
 
     <div class="container">
 
-        <a
-                class="navbar-brand"
-                th:href="@{/}">
+        <a class="navbar-brand"
+           th:href="@{/}">
 
             <i class="bi bi-box-seam me-2"></i>
 
@@ -72,39 +61,25 @@
 
     <div class="row justify-content-center">
 
-        <div class="col-lg-9">
-
+        <div class="col-lg-8">
 
             <div class="card shadow">
 
+                <div class="card-header">
 
-                <!-- CABEÇALHO -->
+                    <h4 class="mb-0"
+                        th:text="${cliente.id == null}
+                        ? 'Cadastrar Cliente'
+                        : 'Editar Cliente'">
 
-                <div class="card-header bg-white py-3">
-
-                    <h4
-                            class="mb-1"
-                            th:text="${cliente.id == null}
-                            ? 'Cadastrar Cliente'
-                            : 'Editar Cliente'">
-
-                        Cliente
+                        Cadastro de Cliente
 
                     </h4>
-
-
-                    <small class="text-muted">
-
-                        Preencha os dados do cliente.
-
-                    </small>
 
                 </div>
 
 
-                <!-- FORMULÁRIO -->
-
-                <div class="card-body p-4">
+                <div class="card-body">
 
                     <form
                             th:action="@{/clientes/salvar}"
@@ -123,103 +98,68 @@
 
                         <div class="mb-3">
 
-                            <label
-                                    for="nome"
-                                    class="form-label">
-
+                            <label class="form-label">
                                 Nome
-
                             </label>
 
-
                             <input
-                                    id="nome"
                                     type="text"
                                     class="form-control"
                                     th:field="*{nome}"
-                                    placeholder="Ex.: Maria Oliveira"
                                     maxlength="150"
                                     required>
 
                         </div>
 
 
-                        <!-- EMAIL -->
+                        <!-- E-MAIL -->
 
                         <div class="mb-3">
 
-                            <label
-                                    for="email"
-                                    class="form-label">
-
+                            <label class="form-label">
                                 E-mail
-
                             </label>
 
-
                             <input
-                                    id="email"
                                     type="email"
                                     class="form-control"
                                     th:field="*{email}"
-                                    placeholder="Ex.: maria.oliveira@email.com"
                                     maxlength="100"
                                     required>
 
                         </div>
 
 
-                        <!-- TELEFONE / CEP -->
+                        <!-- TELEFONE E CEP -->
 
                         <div class="row">
 
-
-                            <!-- TELEFONE -->
-
                             <div class="col-md-6 mb-3">
 
-                                <label
-                                        for="telefone"
-                                        class="form-label">
-
+                                <label class="form-label">
                                     Telefone
-
                                 </label>
 
-
                                 <input
-                                        id="telefone"
-                                        type="tel"
+                                        type="text"
                                         class="form-control"
                                         th:field="*{telefone}"
-                                        placeholder="Ex.: (92) 991772667"
-                                        maxlength="14"
-                                        inputmode="numeric">
+                                        maxlength="20">
 
                             </div>
 
 
-                            <!-- CEP -->
-
                             <div class="col-md-6 mb-3">
 
-                                <label
-                                        for="cep"
-                                        class="form-label">
-
+                                <label class="form-label">
                                     CEP
-
                                 </label>
 
-
                                 <input
-                                        id="cep"
                                         type="text"
                                         class="form-control"
                                         th:field="*{cep}"
-                                        placeholder="Ex.: 69063-490"
-                                        maxlength="9"
-                                        inputmode="numeric">
+                                        maxlength="10">
 
                             </div>
 
@@ -230,75 +170,50 @@
 
                         <div class="mb-3">
 
-                            <label
-                                    for="endereco"
-                                    class="form-label">
-
+                            <label class="form-label">
                                 Endereço
-
                             </label>
 
-
                             <textarea
-                                    id="endereco"
                                     class="form-control"
                                     th:field="*{endereco}"
-                                    rows="3"
-                                    placeholder="Ex.: Av. Brasil, 1000 - Centro">
+                                    rows="3">
                             </textarea>
 
                         </div>
 
 
-                        <!-- CIDADE / ESTADO -->
+                        <!-- CIDADE E ESTADO -->
 
                         <div class="row">
 
-
-                            <!-- CIDADE -->
-
                             <div class="col-md-8 mb-3">
 
-                                <label
-                                        for="cidade"
-                                        class="form-label">
-
+                                <label class="form-label">
                                     Cidade
-
                                 </label>
 
-
                                 <input
-                                        id="cidade"
                                         type="text"
                                         class="form-control"
                                         th:field="*{cidade}"
-                                        placeholder="Ex.: Manaus"
                                         maxlength="100">
 
                             </div>
 
 
-                            <!-- ESTADO -->
-
                             <div class="col-md-4 mb-3">
 
-                                <label
-                                        for="estado"
-                                        class="form-label">
-
+                                <label class="form-label">
                                     Estado
-
                                 </label>
 
-
                                 <input
-                                        id="estado"
                                         type="text"
                                         class="form-control"
                                         th:field="*{estado}"
-                                        placeholder="Ex.: AM"
-                                        maxlength="2">
+                                        maxlength="2"
+                                        placeholder="AM">
 
                             </div>
 
@@ -310,18 +225,12 @@
                         <div class="form-check mb-4">
 
                             <input
-                                    id="ativo"
                                     class="form-check-input"
                                     type="checkbox"
                                     th:field="*{ativo}">
 
-
-                            <label
-                                    for="ativo"
-                                    class="form-check-label">
-
+                            <label class="form-check-label">
                                 Cliente ativo
-
                             </label>
 
                         </div>
@@ -330,7 +239,6 @@
                         <!-- BOTÕES -->
 
                         <div class="d-flex flex-wrap gap-2">
-
 
                             <button
                                     type="submit"
@@ -366,7 +274,6 @@
 
                         </div>
 
-
                     </form>
 
                 </div>
@@ -379,12 +286,5 @@
 
 </div>
 
-
-<!-- JAVASCRIPT DOS CLIENTES -->
-
-<script th:src="@{/js/clientes.js(v=4)}"></script>
-
-
 </body>
-
 </html>
