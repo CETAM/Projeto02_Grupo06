@@ -14,4 +14,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     @Query("SELECT p FROM Produto p WHERE p.quantidadeEstoque <= 0")
     List<Produto> buscarProdutosEmFalta();
 
+    // Derived query: conta quantos produtos estão vinculados a uma categoria
+    long countByCategoriaId(Integer categoriaId);
+
 }

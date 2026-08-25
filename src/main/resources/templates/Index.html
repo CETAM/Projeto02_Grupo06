@@ -11,6 +11,14 @@
 
     <title>Painel | Sistema de Controle de Pedidos</title>
 
+    <!-- Evita "flash" de tema errado antes do CSS carregar -->
+    <script>
+        (function () {
+            var salvo = localStorage.getItem('spd-theme');
+            document.documentElement.setAttribute('data-theme', salvo === 'dark' ? 'dark' : 'light');
+        })();
+    </script>
+
     <!-- Bootstrap -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -38,94 +46,13 @@
 <div class="app-shell">
 
     <!-- SIDEBAR -->
-    <div
-            class="offcanvas offcanvas-start"
-            tabindex="-1"
-            id="sidebar"
-            aria-labelledby="sidebarLabel">
-
-        <a class="sidebar-brand" th:href="@{/}">
-            <span class="brand-icon"><i class="bi bi-box-seam-fill"></i></span>
-            <span id="sidebarLabel">Sistema de Pedidos</span>
-        </a>
-
-        <p class="sidebar-section-label">Menu principal</p>
-
-        <nav class="sidebar-nav">
-
-            <a th:href="@{/}" class="active">
-                <i class="bi bi-grid-fill"></i>
-                Painel
-            </a>
-
-            <a th:href="@{/clientes}">
-                <i class="bi bi-people"></i>
-                Clientes
-            </a>
-
-            <a th:href="@{/produtos}">
-                <i class="bi bi-box"></i>
-                Produtos
-            </a>
-
-            <a th:href="@{/categorias}">
-                <i class="bi bi-tags"></i>
-                Categorias
-            </a>
-
-            <a th:href="@{/pedidos}">
-                <i class="bi bi-cart"></i>
-                Pedidos
-            </a>
-
-        </nav>
-
-        <p class="sidebar-section-label">Relatórios</p>
-
-        <nav class="sidebar-nav">
-
-            <a th:href="@{/relatorios/estoque}">
-                <i class="bi bi-boxes"></i>
-                Controle de Estoque
-            </a>
-
-            <a th:href="@{/relatorios/pedidos-cliente}">
-                <i class="bi bi-person-lines-fill"></i>
-                Pedidos por Cliente
-            </a>
-
-            <a th:href="@{/relatorios/vendas-periodo}">
-                <i class="bi bi-calendar-range"></i>
-                Vendas por Período
-            </a>
-
-        </nav>
-
-    </div>
+    <div th:replace="~{fragments/layout :: sidebar('painel')}"></div>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
 
         <!-- TOPBAR -->
-        <div class="topbar">
-
-            <button
-                    class="btn-menu"
-                    type="button"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#sidebar"
-                    aria-controls="sidebar"
-                    aria-label="Abrir menu">
-
-                <i class="bi bi-list"></i>
-
-            </button>
-
-            <p class="breadcrumb-eyebrow">
-                Sistema de Pedidos / <span class="current">Painel</span>
-            </p>
-
-        </div>
+        <div th:replace="~{fragments/layout :: topbar('Painel')}"></div>
 
         <main class="dashboard">
 
@@ -237,10 +164,10 @@
                         <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
                     </a>
 
-                    <a th:href="@{/relatorios/vendas-periodo}" class="quick-card accent-teal">
+                    <a th:href="@{/relatorios}" class="quick-card accent-teal">
                         <span class="quick-card-icon"><i class="bi bi-bar-chart"></i></span>
                         <h3>Relatórios</h3>
-                        <p>Vendas por período e histórico de pedidos por cliente.</p>
+                        <p>Central de relatórios: estoque, pedidos por cliente e vendas por período.</p>
                         <span class="quick-card-link">Acessar <i class="bi bi-arrow-right"></i></span>
                     </a>
 
@@ -262,13 +189,25 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
+<!-- Toggle de tema -->
+<script th:src="@{/js/theme.js}"></script>
+
 <script th:inline="javascript">
     const chartLabels = /*[[${chartLabels}]]*/ [];
     const chartValues = /*[[${chartValues}]]*/ [];
 
     const ctx = document.getElementById('vendasChart');
 
-    new Chart(ctx, {
+    function coresDoTema(tema) {
+        return tema === 'dark'
+            ? { grid: 'rgba(255, 255, 255, 0.08)', ticks: '#9BA0B5' }
+            : { grid: '#E7E8EF', ticks: '#6B7180' };
+    }
+
+    const temaAtual = document.documentElement.getAttribute('data-theme') || 'light';
+    const cores = coresDoTema(temaAtual);
+
+    const vendasChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: chartLabels,
@@ -288,18 +227,30 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: '#E7E8EF' },
+                    grid: { color: cores.grid },
                     ticks: {
+                        color: cores.ticks,
                         callback: function (value) {
                             return 'R$ ' + value;
                         }
                     }
                 },
                 x: {
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: { color: cores.ticks }
                 }
             }
         }
+    });
+
+    // Recolore o gráfico quando o usuário alterna o tema
+    window.addEventListener('spd-theme-changed', function (evento) {
+        const novasCores = coresDoTema(evento.detail.theme);
+
+        vendasChart.options.scales.y.grid.color = novasCores.grid;
+        vendasChart.options.scales.y.ticks.color = novasCores.ticks;
+        vendasChart.options.scales.x.ticks.color = novasCores.ticks;
+        vendasChart.update();
     });
 </script>
 
