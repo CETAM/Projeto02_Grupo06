@@ -17,6 +17,17 @@ public class RelatorioController {
         this.relatorioService = relatorioService;
     }
 
+    // CENTRAL DE RELATÓRIOS: hub com um cartão-resumo por relatório disponível
+    @GetMapping
+    public String central(Model model) {
+
+        model.addAttribute("totalProdutosEmFalta", relatorioService.contarProdutosEmFalta());
+        model.addAttribute("totalClientesCadastrados", relatorioService.contarClientesCadastrados());
+        model.addAttribute("faturamento30Dias", relatorioService.calcularFaturamentoUltimos30Dias());
+
+        return "Relatorios/central";
+    }
+
     @GetMapping("/estoque")
     public String relatorioEstoque(Model model) {
         model.addAttribute("produtos", relatorioService.buscarProdutosEmFalta());
@@ -34,8 +45,15 @@ public class RelatorioController {
 
         // 2. Se o usuário escolheu um cliente no filtro, busca os pedidos dele
         if (clienteId != null) {
+
             model.addAttribute("pedidos", relatorioService.buscarPedidosPorCliente(clienteId));
             model.addAttribute("clienteSelecionado", clienteId); // Ajuda a manter a opção selecionada no <select>
+
+            // Nome do cliente filtrado, para exibir no texto de contexto acima da tabela
+            relatorioService.buscarTodosClientes().stream()
+                    .filter(c -> c.getId().equals(clienteId))
+                    .findFirst()
+                    .ifPresent(c -> model.addAttribute("nomeClienteSelecionado", c.getNome()));
         }
 
         return "Relatorios/pedidos-cliente";
