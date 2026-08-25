@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -10,672 +9,316 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
 
-    <title>Clientes</title>
+    <title>Clientes | Sistema de Controle de Pedidos</title>
 
+    <!-- Evita "flash" de tema errado antes do CSS carregar -->
+    <script>
+        (function () {
+            var salvo = localStorage.getItem('spd-theme');
+            document.documentElement.setAttribute('data-theme', salvo === 'dark' ? 'dark' : 'light');
+        })();
+    </script>
 
     <!-- Bootstrap -->
-
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
             rel="stylesheet">
 
-
     <!-- Bootstrap Icons -->
-
     <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 
     <!-- CSS do projeto -->
-
     <link
             rel="stylesheet"
             th:href="@{/css/style.css}">
 
 </head>
 
+<body>
 
-<body class="bg-light">
+<div class="app-shell">
 
+    <!-- SIDEBAR -->
+    <div th:replace="~{fragments/layout :: sidebar('clientes')}"></div>
 
-<!-- ===================================================== -->
-<!-- NAVBAR                                                -->
-<!-- ===================================================== -->
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
 
-<nav class="navbar navbar-dark bg-dark">
+        <!-- TOPBAR -->
+        <div th:replace="~{fragments/layout :: topbar('Clientes')}"></div>
 
-    <div class="container">
+        <main class="dashboard">
 
-        <a
-                class="navbar-brand"
-                th:href="@{/}">
+            <div class="list-header">
 
-            <i class="bi bi-box-seam me-2"></i>
+                <div>
+                    <h1>Clientes</h1>
+                    <p>Gerenciamento dos clientes cadastrados</p>
+                </div>
 
-            Sistema de Pedidos
+                <div class="d-flex flex-wrap gap-2">
 
-        </a>
+                    <a th:href="@{/}" class="btn-app-outline">
+                        <i class="bi bi-house-door"></i>
+                        Início
+                    </a>
 
-    </div>
+                    <button
+                            type="button"
+                            class="btn-app-primary"
+                            onclick="abrirModalNovoCliente()">
 
-</nav>
+                        <i class="bi bi-person-plus"></i>
+                        Novo Cliente
 
+                    </button>
 
-<!-- ===================================================== -->
-<!-- CONTEÚDO PRINCIPAL                                    -->
-<!-- ===================================================== -->
-
-<div class="container mt-5 mb-5">
-
-
-    <!-- CABEÇALHO -->
-
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-
-        <div>
-
-            <h2 class="mb-1">
-                Clientes
-            </h2>
-
-            <p class="text-muted mb-0">
-                Gerenciamento dos clientes cadastrados
-            </p>
-
-        </div>
-
-
-        <!-- BOTÕES DO CABEÇALHO -->
-
-        <div class="d-flex gap-2">
-
-
-            <!-- INÍCIO -->
-
-            <a
-                    th:href="@{/}"
-                    class="btn btn-outline-secondary">
-
-                <i class="bi bi-house-door me-1"></i>
-
-                Início
-
-            </a>
-
-
-            <!-- NOVO CLIENTE -->
-
-            <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCadastroCliente">
-
-                <i class="bi bi-person-plus me-1"></i>
-
-                Novo Cliente
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ================================================= -->
-    <!-- TABELA                                            -->
-    <!-- ================================================= -->
-
-    <div class="card shadow">
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-
-                <table class="table table-striped table-hover align-middle">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Nome</th>
-
-                        <th>E-mail</th>
-
-                        <th>Telefone</th>
-
-                        <th>Cidade</th>
-
-                        <th>Estado</th>
-
-                        <th>Data de Cadastro</th>
-
-                        <th>Status</th>
-
-                        <th>Ações</th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                    <!-- LISTAGEM DOS CLIENTES -->
-
-                    <tr th:each="cliente : ${clientes}">
-
-
-                        <td th:text="${cliente.id}">
-                        </td>
-
-
-                        <td th:text="${cliente.nome}">
-                        </td>
-
-
-                        <td th:text="${cliente.email}">
-                        </td>
-
-
-                        <td
-                                class="text-nowrap"
-                                th:text="${cliente.telefone}">
-                        </td>
-
-
-                        <td th:text="${cliente.cidade}">
-                        </td>
-
-
-                        <td th:text="${cliente.estado}">
-                        </td>
-
-
-                        <!-- DATA DE CADASTRO -->
-
-                        <td
-                                class="text-nowrap"
-                                th:text="${cliente.dataCriacao != null
-                                ? #temporals.format(cliente.dataCriacao, 'dd/MM/yyyy')
-                                : '-'}">
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            <span
-                                    th:if="${cliente.ativo}"
-                                    class="badge bg-success">
-
-                                Ativo
-
-                            </span>
-
-
-                            <span
-                                    th:unless="${cliente.ativo}"
-                                    class="badge bg-secondary">
-
-                                Inativo
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- AÇÕES -->
-
-                        <td>
-
-                            <div class="d-flex flex-nowrap gap-2">
-
-
-                                <!-- EDITAR -->
-
-                                <a
-                                        th:href="@{/clientes/editar/{id}(id=${cliente.id})}"
-                                        class="btn btn-warning btn-sm">
-
-                                    <i class="bi bi-pencil me-1"></i>
-
-                                    Editar
-
-                                </a>
-
-
-                                <!-- EXCLUIR -->
-
-                                <form
-                                        th:action="@{/clientes/excluir/{id}(id=${cliente.id})}"
-                                        method="post">
-
-                                    <button
-                                            type="submit"
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Deseja realmente excluir este cliente?')">
-
-                                        <i class="bi bi-trash me-1"></i>
-
-                                        Excluir
-
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- CASO NÃO EXISTAM CLIENTES -->
-
-                    <tr th:if="${#lists.isEmpty(clientes)}">
-
-                        <td
-                                colspan="9"
-                                class="text-center text-muted py-4">
-
-                            Nenhum cliente cadastrado.
-
-                        </td>
-
-                    </tr>
-
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
-        </div>
+            <!-- TABELA -->
+            <div class="app-table-card">
+
+                <div class="table-responsive">
+
+                    <table class="app-table">
+
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Cidade</th>
+                            <th>Estado</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="cliente : ${clientes}">
+
+                            <td th:text="${cliente.id}"></td>
+                            <td th:text="${cliente.nome}"></td>
+                            <td th:text="${cliente.email}"></td>
+                            <td th:text="${cliente.telefone}"></td>
+                            <td th:text="${cliente.cidade}"></td>
+                            <td th:text="${cliente.estado}"></td>
+
+                            <!-- STATUS -->
+                            <td>
+                                <span th:if="${cliente.ativo}" class="status-pill ativo">Ativo</span>
+                                <span th:unless="${cliente.ativo}" class="status-pill inativo">Inativo</span>
+                            </td>
+
+                            <!-- AÇÕES -->
+                            <td>
+
+                                <div class="row-actions">
+
+                                    <button
+                                            type="button"
+                                            class="btn-icon-action edit"
+                                            title="Editar cliente"
+                                            th:data-id="${cliente.id}"
+                                            th:data-nome="${cliente.nome}"
+                                            th:data-email="${cliente.email}"
+                                            th:data-telefone="${cliente.telefone}"
+                                            th:data-cep="${cliente.cep}"
+                                            th:data-endereco="${cliente.endereco}"
+                                            th:data-cidade="${cliente.cidade}"
+                                            th:data-estado="${cliente.estado}"
+                                            th:data-ativo="${cliente.ativo}"
+                                            onclick="abrirModalEditarCliente(this)">
+
+                                        <i class="bi bi-pencil"></i>
+
+                                    </button>
+
+                                    <form
+                                            th:action="@{/clientes/excluir/{id}(id=${cliente.id})}"
+                                            method="post"
+                                            style="display:inline;">
+
+                                        <button
+                                                type="submit"
+                                                class="btn-icon-action delete"
+                                                title="Excluir cliente"
+                                                onclick="return confirm('Deseja realmente excluir este cliente?')">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- CASO NÃO EXISTAM CLIENTES -->
+                        <tr th:if="${#lists.isEmpty(clientes)}">
+                            <td colspan="8">
+                                <div class="app-empty-state">
+                                    <i class="bi bi-people"></i>
+                                    Nenhum cliente cadastrado.
+                                </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </main>
 
     </div>
 
 </div>
 
 
+<!-- ==============================================================
+     MODAL DE CADASTRO / EDIÇÃO DE CLIENTE
+     ============================================================== -->
 
-<!-- ===================================================== -->
-<!-- MODAL CADASTRO DE CLIENTE                             -->
-<!-- ===================================================== -->
-
-<div
-        class="modal fade"
-        id="modalCadastroCliente"
-        tabindex="-1"
-        aria-labelledby="tituloModalCliente"
-        aria-hidden="true">
-
-
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-
-
-        <div class="modal-content">
-
-
-            <!-- ========================================= -->
-            <!-- CABEÇALHO DO MODAL                       -->
-            <!-- ========================================= -->
-
-            <div class="modal-header">
-
-                <div>
-
-                    <h5
-                            class="modal-title"
-                            id="tituloModalCliente">
-
-                        <i class="bi bi-person-plus me-2"></i>
-
-                        Cadastrar Cliente
-
-                    </h5>
-
-
-                    <small class="text-muted">
-
-                        Preencha os dados para cadastrar um novo cliente.
-
-                    </small>
-
-                </div>
-
-
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Fechar">
-                </button>
-
-            </div>
-
-
-
-            <!-- ========================================= -->
-            <!-- FORMULÁRIO                               -->
-            <!-- ========================================= -->
+        <div class="modal-content app-modal">
 
             <form
+                    id="clienteForm"
                     th:action="@{/clientes/salvar}"
-                    th:object="${clienteForm}"
                     method="post">
 
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clienteModalLabel">Cadastrar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
 
-                <div class="modal-body p-4">
+                <div class="modal-body">
 
-
-                    <!-- ================================= -->
-                    <!-- DADOS DO CLIENTE                  -->
-                    <!-- ================================= -->
-
-                    <h6 class="fw-bold text-primary mb-3">
-
-                        <i class="bi bi-person me-2"></i>
-
-                        Dados do Cliente
-
-                    </h6>
-
-
-                    <!-- NOME -->
+                    <input type="hidden" id="clienteId" name="id">
 
                     <div class="mb-3">
-
-                        <label
-                                for="nome"
-                                class="form-label">
-
-                            Nome
-
-                        </label>
-
-
-                        <input
-                                id="nome"
-                                type="text"
-                                class="form-control"
-                                th:field="*{nome}"
-                                placeholder="Ex.: Maria Oliveira"
-                                maxlength="150"
-                                required>
-
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="clienteNome" name="nome" maxlength="150" required>
                     </div>
-
-
-
-                    <!-- E-MAIL -->
 
                     <div class="mb-3">
-
-                        <label
-                                for="email"
-                                class="form-label">
-
-                            E-mail
-
-                        </label>
-
-
-                        <input
-                                id="email"
-                                type="email"
-                                class="form-control"
-                                th:field="*{email}"
-                                placeholder="Ex.: maria.oliveira@email.com"
-                                maxlength="100"
-                                required>
-
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="clienteEmail" name="email" maxlength="100" required>
                     </div>
-
-
-
-                    <!-- TELEFONE -->
-
-                    <div class="mb-3">
-
-                        <label
-                                for="telefone"
-                                class="form-label">
-
-                            Telefone
-
-                        </label>
-
-
-                        <input
-                                id="telefone"
-                                type="tel"
-                                class="form-control"
-                                th:field="*{telefone}"
-                                placeholder="Ex.: (92) 991772667"
-                                maxlength="20">
-
-                    </div>
-
-
-
-                    <hr class="my-4">
-
-
-
-                    <!-- ================================= -->
-                    <!-- ENDEREÇO                          -->
-                    <!-- ================================= -->
-
-                    <h6 class="fw-bold text-primary mb-3">
-
-                        <i class="bi bi-geo-alt me-2"></i>
-
-                        Endereço
-
-                    </h6>
-
-
-
-                    <!-- CEP -->
-
-                    <div class="mb-3">
-
-                        <label
-                                for="cep"
-                                class="form-label">
-
-                            CEP
-
-                        </label>
-
-
-                        <input
-                                id="cep"
-                                type="text"
-                                class="form-control"
-                                th:field="*{cep}"
-                                placeholder="Ex.: 69063-490"
-                                maxlength="10">
-
-                    </div>
-
-
-
-                    <!-- ENDEREÇO -->
-
-                    <div class="mb-3">
-
-                        <label
-                                for="endereco"
-                                class="form-label">
-
-                            Endereço
-
-                        </label>
-
-
-                        <textarea
-                                id="endereco"
-                                class="form-control"
-                                th:field="*{endereco}"
-                                rows="2"
-                                placeholder="Ex.: Avenida Brasil, 1000 - Centro">
-                        </textarea>
-
-                    </div>
-
-
-
-                    <!-- CIDADE E ESTADO -->
 
                     <div class="row">
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="clienteTelefone" name="telefone" maxlength="20">
+                        </div>
 
-                        <!-- CIDADE -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CEP</label>
+                            <input type="text" class="form-control" id="clienteCep" name="cep" maxlength="10">
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <textarea class="form-control" id="clienteEndereco" name="endereco" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
 
                         <div class="col-md-8 mb-3">
-
-                            <label
-                                    for="cidade"
-                                    class="form-label">
-
-                                Cidade
-
-                            </label>
-
-
-                            <input
-                                    id="cidade"
-                                    type="text"
-                                    class="form-control"
-                                    th:field="*{cidade}"
-                                    placeholder="Ex.: Manaus"
-                                    maxlength="100">
-
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="clienteCidade" name="cidade" maxlength="100">
                         </div>
-
-
-
-                        <!-- ESTADO -->
 
                         <div class="col-md-4 mb-3">
-
-                            <label
-                                    for="estado"
-                                    class="form-label">
-
-                                Estado
-
-                            </label>
-
-
-                            <input
-                                    id="estado"
-                                    type="text"
-                                    class="form-control"
-                                    th:field="*{estado}"
-                                    placeholder="Ex.: AM"
-                                    maxlength="2">
-
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-control" id="clienteEstado" name="estado" maxlength="2" placeholder="AM">
                         </div>
 
                     </div>
 
-
-
-                    <!-- ================================= -->
-                    <!-- STATUS                            -->
-                    <!-- ================================= -->
-
-                    <div class="form-check mt-2">
-
-                        <input
-                                id="ativo"
-                                class="form-check-input"
-                                type="checkbox"
-                                th:field="*{ativo}">
-
-
-                        <label
-                                for="ativo"
-                                class="form-check-label">
-
-                            Cliente ativo
-
-                        </label>
-
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="clienteAtivo" name="ativo" value="true">
+                        <label class="form-check-label" for="clienteAtivo">Cliente ativo</label>
                     </div>
 
-
                 </div>
-
-
-
-                <!-- ===================================== -->
-                <!-- RODAPÉ DO MODAL                      -->
-                <!-- ===================================== -->
 
                 <div class="modal-footer">
-
-
-                    <!-- CANCELAR -->
-
-                    <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-
-                        <i class="bi bi-x-lg me-1"></i>
-
-                        Cancelar
-
+                    <button type="button" class="btn-app-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-app-primary">
+                        <i class="bi bi-check-lg"></i>
+                        Salvar
                     </button>
-
-
-
-                    <!-- SALVAR -->
-
-                    <button
-                            type="submit"
-                            class="btn btn-primary">
-
-                        <i class="bi bi-check-lg me-1"></i>
-
-                        Salvar Cliente
-
-                    </button>
-
-
                 </div>
-
 
             </form>
 
         </div>
-
     </div>
-
 </div>
 
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ===================================================== -->
-<!-- BOOTSTRAP JAVASCRIPT                                  -->
-<!-- ===================================================== -->
+<!-- Toggle de tema -->
+<script th:src="@{/js/theme.js}"></script>
 
-<script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+<script>
+    const clienteModalEl = document.getElementById('clienteModal');
+    const clienteModal = new bootstrap.Modal(clienteModalEl);
+
+    function limparFormularioCliente() {
+        document.getElementById('clienteForm').reset();
+        document.getElementById('clienteId').value = '';
+        document.getElementById('clienteAtivo').checked = true;
+    }
+
+    function abrirModalNovoCliente() {
+        limparFormularioCliente();
+        document.getElementById('clienteModalLabel').textContent = 'Cadastrar Cliente';
+        clienteModal.show();
+    }
+
+    function abrirModalEditarCliente(botao) {
+        const dados = botao.dataset;
+
+        document.getElementById('clienteId').value = dados.id;
+        document.getElementById('clienteNome').value = dados.nome || '';
+        document.getElementById('clienteEmail').value = dados.email || '';
+        document.getElementById('clienteTelefone').value = dados.telefone || '';
+        document.getElementById('clienteCep').value = dados.cep || '';
+        document.getElementById('clienteEndereco').value = dados.endereco || '';
+        document.getElementById('clienteCidade').value = dados.cidade || '';
+        document.getElementById('clienteEstado').value = dados.estado || '';
+        document.getElementById('clienteAtivo').checked = dados.ativo === 'true';
+
+        document.getElementById('clienteModalLabel').textContent = 'Editar Cliente';
+        clienteModal.show();
+    }
 </script>
 
-
 </body>
-
 </html>

@@ -12,15 +12,9 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
-
     public ClienteController(ClienteService clienteService) {
         this.clienteService = clienteService;
     }
-
-
-    // ==========================================
-    // LISTAR CLIENTES
-    // ==========================================
 
     @GetMapping
     public String listar(Model model) {
@@ -30,20 +24,8 @@ public class ClienteController {
                 clienteService.listarTodos()
         );
 
-        // Objeto utilizado pelo formulário do Modal
-        model.addAttribute(
-                "clienteForm",
-                new Cliente()
-        );
-
         return "Clientes/lista";
     }
-
-
-    // ==========================================
-    // NOVO CLIENTE
-    // Mantido para não quebrar a estrutura atual
-    // ==========================================
 
     @GetMapping("/novo")
     public String novo(Model model) {
@@ -56,24 +38,13 @@ public class ClienteController {
         return "Clientes/formulario";
     }
 
-
-    // ==========================================
-    // SALVAR CLIENTE
-    // ==========================================
-
     @PostMapping("/salvar")
-    public String salvar(
-            @ModelAttribute Cliente cliente) {
+    public String salvar(@ModelAttribute Cliente cliente) {
 
         clienteService.salvar(cliente);
 
         return "redirect:/clientes";
     }
-
-
-    // ==========================================
-    // EDITAR CLIENTE
-    // ==========================================
 
     @GetMapping("/editar/{id}")
     public String editar(
@@ -91,14 +62,8 @@ public class ClienteController {
         return "Clientes/formulario";
     }
 
-
-    // ==========================================
-    // EXCLUIR CLIENTE
-    // ==========================================
-
     @PostMapping("/excluir/{id}")
-    public String excluir(
-            @PathVariable Integer id) {
+    public String excluir(@PathVariable Integer id) {
 
         clienteService.excluir(id);
 
