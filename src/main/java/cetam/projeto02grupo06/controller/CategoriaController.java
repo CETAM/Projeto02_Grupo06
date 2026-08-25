@@ -5,6 +5,10 @@ import cetam.projeto02grupo06.service.CategoriaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/categorias")
@@ -21,10 +25,20 @@ public class CategoriaController {
     @GetMapping
     public String listar(Model model) {
 
-        model.addAttribute(
-                "categorias",
-                categoriaService.listarTodas()
-        );
+        var categorias = categoriaService.listarTodas();
+
+        // Monta um mapa {categoriaId -> quantidade de produtos vinculados}
+        // usado para exibir o badge na tabela e bloquear exclusões indevidas
+        Map<Integer, Long> contagemProdutos = new HashMap<>();
+        for (Categoria categoria : categorias) {
+            contagemProdutos.put(
+                    categoria.getId(),
+                    categoriaService.contarProdutosVinculados(categoria.getId())
+            );
+        }
+
+        model.addAttribute("categorias", categorias);
+        model.addAttribute("contagemProdutos", contagemProdutos);
 
         return "Categorias/lista";
     }
@@ -71,9 +85,14 @@ public class CategoriaController {
 
     @PostMapping("/excluir/{id}")
     public String excluir(
-            @PathVariable Integer id) {
+            @PathVariable Integer id,
+            RedirectAttributes redirectAttributes) {
 
-        categoriaService.excluir(id);
+        try {
+            categoriaService.excluir(id);
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
 
         return "redirect:/categorias";
     }

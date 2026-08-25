@@ -2,6 +2,7 @@ package cetam.projeto02grupo06.service;
 
 import cetam.projeto02grupo06.model.Categoria;
 import cetam.projeto02grupo06.repository.CategoriaRepository;
+import cetam.projeto02grupo06.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,10 +11,12 @@ import java.util.List;
 public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
+    private final ProdutoRepository produtoRepository;
 
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
+    public CategoriaService(CategoriaRepository categoriaRepository, ProdutoRepository produtoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.produtoRepository = produtoRepository;
     }
 
 
@@ -56,7 +59,24 @@ public class CategoriaService {
     }
 
 
+    // Quantos produtos estão vinculados a essa categoria
+    public long contarProdutosVinculados(Integer categoriaId) {
+        return produtoRepository.countByCategoriaId(categoriaId);
+    }
+
+
     public void excluir(Integer id) {
+
+        long produtosVinculados = contarProdutosVinculados(id);
+
+        if (produtosVinculados > 0) {
+            throw new IllegalStateException(
+                    "Não é possível excluir esta categoria: existem "
+                            + produtosVinculados
+                            + " produto(s) vinculado(s) a ela."
+            );
+        }
+
         categoriaRepository.deleteById(id);
     }
 }
