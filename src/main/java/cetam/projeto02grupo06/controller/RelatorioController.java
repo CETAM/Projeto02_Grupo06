@@ -69,6 +69,15 @@ public class RelatorioController {
         // Se o usuário preencheu as duas datas no filtro
         if (dataInicio != null && dataFim != null) {
 
+            // Valida a ordem das datas ANTES de consultar — evita mostrar
+            // "nenhuma venda encontrada" quando na verdade o intervalo está invertido
+            if (dataInicio.isAfter(dataFim)) {
+                model.addAttribute("erroPeriodo", "A Data Inicial não pode ser posterior à Data Final.");
+                model.addAttribute("dataInicio", dataInicio);
+                model.addAttribute("dataFim", dataFim);
+                return "Relatorios/vendas-periodo";
+            }
+
             // Converte a data inicial para as 00:00:00 e a final para as 23:59:59
             java.time.LocalDateTime inicio = dataInicio.atStartOfDay();
             java.time.LocalDateTime fim = dataFim.atTime(java.time.LocalTime.MAX);

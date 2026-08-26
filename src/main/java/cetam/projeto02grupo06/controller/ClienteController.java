@@ -2,9 +2,15 @@ package cetam.projeto02grupo06.controller;
 
 import cetam.projeto02grupo06.model.Cliente;
 import cetam.projeto02grupo06.service.ClienteService;
+import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/clientes")
@@ -39,9 +45,24 @@ public class ClienteController {
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute Cliente cliente) {
+    public String salvar(
+            @Valid @ModelAttribute Cliente cliente,
+            BindingResult resultado,
+            RedirectAttributes redirectAttributes) {
 
-        clienteService.salvar(cliente);
+        if (resultado.hasErrors()) {
+            String mensagens = resultado.getFieldErrors().stream()
+                    .map(erro -> erro.getDefaultMessage())
+                    .collect(Collectors.joining(" "));
+            redirectAttributes.addFlashAttribute("erro", mensagens);
+            return "redirect:/clientes";
+        }
+
+        try {
+            clienteService.salvar(cliente);
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("erro", "Já existe um cliente cadastrado com esse e-mail.");
+        }
 
         return "redirect:/clientes";
     }
@@ -63,9 +84,15 @@ public class ClienteController {
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluir(@PathVariable Integer id) {
+    public String excluir(
+            @PathVariable Integer id,
+            RedirectAttributes redirectAttributes) {
 
-        clienteService.excluir(id);
+        try {
+            clienteService.excluir(id);
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
 
         return "redirect:/clientes";
     }

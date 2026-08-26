@@ -1,8 +1,11 @@
-CREATE DATABASE IF NOT EXISTS grupo06_db;
--- Conectar ao banco de dados
- USE grupo06_db;
+DROP DATABASE IF EXISTS grupo06_db;
+CREATE DATABASE grupo06_db;
+USE grupo06_db;
 
--- Tabela de Categorias
+-- ========================================
+-- 1. CRIAÇÃO DAS TABELAS
+-- ========================================
+
 CREATE TABLE categorias (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
@@ -10,7 +13,6 @@ CREATE TABLE categorias (
     data_criacao date
 );
 
--- Tabela de Produtos
 CREATE TABLE produtos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -22,8 +24,6 @@ CREATE TABLE produtos (
     FOREIGN KEY (categoria_id) REFERENCES categorias(id)
 );
 
-
--- Tabela de Clientes
 CREATE TABLE clientes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -37,7 +37,6 @@ CREATE TABLE clientes (
     ativo BOOLEAN DEFAULT TRUE
 );
 
--- Tabela de Pedidos (CORRIGIDO)
 CREATE TABLE pedidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INTEGER NOT NULL,
@@ -49,22 +48,6 @@ CREATE TABLE pedidos (
     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
 
- -- Trigger para calcular data_entrega automaticamente
-DELIMITER $$
-
-DELIMITER $$
-CREATE TRIGGER trg_set_data_entrega
-BEFORE INSERT ON pedidos
-FOR EACH ROW
-BEGIN
-  IF NEW.data_entrega IS NULL THEN
-    SET NEW.data_entrega = DATE_ADD(NEW.data_pedido, INTERVAL (5 + FLOOR(RAND() * 3)) DAY);
-    SET NEW.data_entrega = DATE_ADD(NEW.data_entrega, INTERVAL FLOOR(RAND() * 24) HOUR);
-    SET NEW.data_entrega = DATE_ADD(NEW.data_entrega, INTERVAL FLOOR(RAND() * 60) MINUTE);
-  END IF;
-END$$
-DELIMITER ;
- -- Tabela de Itens do Pedido
 CREATE TABLE itens_pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pedido_id INTEGER NOT NULL,
@@ -76,7 +59,6 @@ CREATE TABLE itens_pedido (
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
--- Tabela de Controle de Estoque
 CREATE TABLE controle_estoque (
     id INT AUTO_INCREMENT PRIMARY KEY,
     produto_id INTEGER NOT NULL,
@@ -88,38 +70,419 @@ CREATE TABLE controle_estoque (
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
-
-
- -- Inserir dados de exemplo
-INSERT INTO categorias (nome, descricao, data_criacao) VALUES 
-('Eletrônicos', 'Produtos eletrônicos diversos','2026-01-10'), 
-('Roupas', 'Vestuário em geral','2026-01-15'), 
-('Alimentos', 'Produtos alimentícios','2026-01-20');
+-- ========================================
+-- 2. TRIGGER
+-- ========================================
+DELIMITER $$
+CREATE TRIGGER trg_set_data_entrega
+    BEFORE INSERT ON pedidos
+    FOR EACH ROW
+BEGIN
+    IF NEW.data_entrega IS NULL THEN
+    SET NEW.data_entrega = DATE_ADD(NEW.data_pedido, INTERVAL (5 + FLOOR(RAND() * 3)) DAY);
+    SET NEW.data_entrega = DATE_ADD(NEW.data_entrega, INTERVAL FLOOR(RAND() * 24) HOUR);
+    SET NEW.data_entrega = DATE_ADD(NEW.data_entrega, INTERVAL FLOOR(RAND() * 60) MINUTE);
+END IF;
+END$$
+DELIMITER ;
 
 -- ========================================
--- INSERIR PRODUTOS
+-- 3. INSERÇÃO DE DADOS (COM IDs EXPLÍCITOS)
 -- ========================================
 
-INSERT INTO produtos (nome, descricao, preco, quantidade_estoque, categoria_id, data_criacao) VALUES 
-('Notebook Dell', 'Notebook Intel Core i5', 2500.00, 10, 1, '2026-02-11'),
-('Smartphone Samsung', 'Smartphone Android 128GB', 1200.00, 15, 1, '2026-04-16'),
-('Camiseta Básica', 'Camiseta 100% algodão', 49.90, 50, 2, '2026-04-21'),
-('Calça Jeans', 'Calça jeans azul', 89.90, 30, 2, '2026-05-20'),
-('Arroz 5kg', 'Arroz integral 5kg', 25.00, 100, 3, '2026-03-15');
+-- A) CATEGORIAS
+INSERT INTO categorias (id, nome, descricao, data_criacao) VALUES
+(1, 'Eletrônicos', 'Produtos eletrônicos diversos','2026-01-10'),
+(2, 'Roupas', 'Vestuário em geral','2026-01-15'),
+(3, 'Alimentos', 'Produtos alimentícios','2026-01-20'),
+(4, 'Livros', 'Obras literárias, acadêmicas e e-books', '2026-02-01'),
+(5, 'Móveis', 'Móveis para casa, decoração e escritório', '2026-02-05'),
+(6, 'Beleza e Perfumaria', 'Cosméticos, maquiagem e cuidados pessoais', '2026-02-10'),
+(7, 'Esportes', 'Artigos, roupas e equipamentos esportivos', '2026-02-15'),
+(8, 'Brinquedos', 'Brinquedos infantis e jogos de tabuleiro', '2026-02-20'),
+(9, 'Automotivo', 'Peças, pneus e acessórios para veículos', '2026-02-25'),
+(10, 'Papelaria', 'Materiais escolares e utilidades de escritório', '2026-03-01'),
+(11, 'Calçados', 'Tênis, sapatos, sandálias e botas', '2026-03-05'),
+(12, 'Pet Shop', 'Rações, acessórios e brinquedos para animais de estimação', '2026-03-10'),
+(13, 'Cama, Mesa e Banho', 'Roupas de cama, toalhas e tapetes', '2026-03-15'),
+(14, 'Ferramentas', 'Ferramentas manuais, elétricas e equipamentos de construção', '2026-03-20'),
+(15, 'Joias e Relógios', 'Joias de ouro, prata, bijuterias e relógios de pulso', '2026-03-25'),
+(16, 'Games', 'Consoles de videogame, jogos físicos e acessórios gamers', '2026-03-30'),
+(17, 'Saúde e Bem-estar', 'Equipamentos médicos domésticos, vitaminas e suplementos', '2026-04-05'),
+(18, 'Jardinagem', 'Plantas, sementes, vasos e equipamentos para jardim', '2026-04-10'),
+(19, 'Instrumentos Musicais', 'Violões, teclados, baterias e acessórios musicais', '2026-04-15'),
+(20, 'Eletrodomésticos', 'Geladeiras, fogões, micro-ondas e outros itens para o lar', '2026-04-20');
 
--- ========================================
--- INSERIR CLIENTES
--- ========================================
+-- B) PRODUTOS
+INSERT INTO produtos (id, nome, descricao, preco, quantidade_estoque, categoria_id, data_criacao) VALUES
+(1, 'Notebook Dell', 'Notebook Intel Core i5', 2500.00, 10, 1, '2026-02-11'),
+(2, 'Smartphone Samsung', 'Smartphone Android 128GB', 1200.00, 15, 1, '2026-04-16'),
+(3, 'Camiseta Básica', 'Camiseta 100% algodão', 49.90, 50, 2, '2026-04-21'),
+(4, 'Calça Jeans', 'Calça jeans azul', 89.90, 30, 2, '2026-05-20'),
+(5, 'Arroz 5kg', 'Arroz integral 5kg', 25.00, 100, 3, '2026-03-15'),
+(6, 'Monitor 24 Polegadas', 'Monitor LED Full HD 75Hz', 750.00, 25, 1, '2026-02-28'),
+(7, 'Mouse Sem Fio Logitech', 'Mouse ergonômico com bateria de longa duração', 120.00, 40, 1, '2026-03-05'),
+(8, 'Teclado Mecânico', 'Teclado mecânico RGB switch blue', 299.90, 30, 1, '2026-03-10'),
+(9, 'Fone de Ouvido Bluetooth', 'Fone com cancelamento de ruído ativo', 450.00, 20, 1, '2026-03-12'),
+(10, 'Jaqueta de Couro Sintético', 'Jaqueta preta com zíper', 250.00, 15, 2, '2026-04-02'),
+(11, 'Vestido Floral de Verão', 'Vestido leve em viscose', 120.00, 35, 2, '2026-04-10'),
+(12, 'Bermuda Sarja Masculina', 'Bermuda bege com bolsos laterais', 85.50, 40, 2, '2026-04-15'),
+(13, 'Café Torrado e Moído 500g', 'Café tradicional blend intenso', 18.90, 200, 3, '2026-02-05'),
+(14, 'Feijão Carioca 1kg', 'Feijão tipo 1 selecionado', 8.50, 300, 3, '2026-02-10'),
+(15, 'Macarrão Espaguete 500g', 'Massa de sêmola com ovos', 5.90, 150, 3, '2026-02-15'),
+(16, 'Livro - 1984', 'Edição especial de capa dura, George Orwell', 45.90, 60, 4, '2026-03-01'),
+(17, 'Livro - O Senhor dos Anéis', 'Volume único completo', 120.00, 25, 4, '2026-03-05'),
+(18, 'Livro - Sapiens', 'Uma Breve História da Humanidade', 59.90, 40, 4, '2026-03-10'),
+(19, 'Livro - Hábitos Atômicos', 'Método fácil para criar bons hábitos', 49.90, 55, 4, '2026-03-15'),
+(20, 'Livro - Harry Potter', 'A Pedra Filosofal - Edição ilustrada', 79.90, 30, 4, '2026-03-20'),
+(21, 'Sofá 3 Lugares Retrátil', 'Sofá em suede cinza', 1450.00, 10, 5, '2026-02-15'),
+(22, 'Mesa de Jantar 4 Cadeiras', 'Mesa tampo de vidro e base de madeira', 890.00, 12, 5, '2026-02-18'),
+(23, 'Cadeira de Escritório', 'Cadeira ergonômica presidente', 550.00, 25, 5, '2026-02-22'),
+(24, 'Guarda-Roupa Casal', 'Guarda-roupa 6 portas em MDF', 1200.00, 8, 5, '2026-02-25'),
+(25, 'Estante para Livros', 'Estante vertical 5 prateleiras', 250.00, 30, 5, '2026-03-01'),
+(26, 'Perfume Masculino 100ml', 'Fragrância amadeirada intensa', 290.00, 40, 6, '2026-04-05'),
+(27, 'Perfume Feminino 50ml', 'Fragrância floral doce', 240.00, 45, 6, '2026-04-10'),
+(28, 'Shampoo Anticaspa 400ml', 'Fórmula refrescante com mentol', 22.90, 100, 6, '2026-04-12'),
+(29, 'Condicionador Hidratante 400ml', 'Brilho e maciez para os fios', 24.90, 90, 6, '2026-04-15'),
+(30, 'Creme Hidratante Corporal 200g', 'Hidratação profunda para pele seca', 45.00, 60, 6, '2026-04-20'),
+(31, 'Bola de Futebol Oficial', 'Bola com costura reforçada e padrão oficial', 110.00, 50, 7, '2026-03-10'),
+(32, 'Raquete de Tênis Profissional', 'Estrutura em fibra de carbono', 450.00, 15, 7, '2026-03-15'),
+(33, 'Óculos de Natação', 'Lentes anti-embaçantes', 45.00, 80, 7, '2026-03-20'),
+(34, 'Kit de Halteres 10kg', '2 halteres de 5kg emborrachados', 130.00, 25, 7, '2026-03-25'),
+(35, 'Corda de Pular', 'Corda ajustável de alta velocidade', 25.00, 100, 7, '2026-03-30'),
+(36, 'Quebra-Cabeça 1000 Peças', 'Imagem de paisagem europeia', 65.00, 40, 8, '2026-05-01'),
+(37, 'Jogo de Tabuleiro Clássico', 'Jogo de propriedades e finanças', 110.00, 35, 8, '2026-05-05'),
+(38, 'Carrinho de Controle Remoto', 'Escala 1:16 com bateria recarregável', 180.00, 20, 8, '2026-05-10'),
+(39, 'Boneca de Pano', 'Feita à mão com materiais antialérgicos', 75.00, 30, 8, '2026-05-15'),
+(40, 'Blocos de Montar 500 Peças', 'Caixa criativa para crianças', 150.00, 25, 8, '2026-05-20'),
+(41, 'Pneu Aro 15', 'Pneu para carros de passeio', 350.00, 60, 9, '2026-02-25'),
+(42, 'Óleo de Motor 5W30 1L', 'Óleo sintético de alta performance', 45.00, 120, 9, '2026-03-01'),
+(43, 'Cera Cristalizadora 200g', 'Proteção e brilho prolongado', 35.90, 80, 9, '2026-03-05'),
+(44, 'Limpador de Para-brisa (Par)', 'Palhetas de silicone 20 polegadas', 40.00, 100, 9, '2026-03-10'),
+(45, 'Capa Protetora de Volante', 'Capa universal em couro sintético', 25.00, 50, 9, '2026-03-15'),
+(46, 'Caderno Universitário 10 Matérias', 'Capa dura com 200 folhas', 25.90, 150, 10, '2026-01-20'),
+(47, 'Kit de Canetas Esferográficas', 'Caixa com 50 canetas azul e preta', 35.00, 80, 10, '2026-01-25'),
+(48, 'Estojo Escolar Duplo', 'Estojo em nylon resistente', 20.00, 100, 10, '2026-02-01'),
+(49, 'Mochila Escolar Preta', 'Mochila com compartimento para notebook', 110.00, 60, 10, '2026-02-05'),
+(50, 'Kit Marcador de Texto', '5 cores em tons pastéis', 15.50, 120, 10, '2026-02-10'),
+(51, 'Tênis de Corrida Masculino', 'Sistema de amortecimento em gel', 299.90, 45, 11, '2026-04-10'),
+(52, 'Sapato Social de Couro Preto', 'Ideal para eventos e trabalho', 180.00, 30, 11, '2026-04-15'),
+(53, 'Sandália Feminina Anabela', 'Conforto e estilo para o dia a dia', 95.00, 50, 11, '2026-04-20'),
+(54, 'Bota de Trilha Impermeável', 'Sola tratorada de alta aderência', 350.00, 20, 11, '2026-04-25'),
+(55, 'Chinelo de Dedo', 'Borracha macia e flexível', 29.90, 200, 11, '2026-05-01'),
+(56, 'Ração para Cães Adultos 15kg', 'Sabor carne e frango premium', 165.00, 40, 12, '2026-02-15'),
+(57, 'Ração para Gatos Castrados 3kg', 'Auxilia no trato urinário', 65.00, 50, 12, '2026-02-20'),
+(58, 'Coleira Antipulgas', 'Duração de até 6 meses', 85.00, 100, 12, '2026-02-25'),
+(59, 'Arranhador para Gatos de Torre', 'Com pelúcia e brinquedo', 120.00, 20, 12, '2026-03-01'),
+(60, 'Cama para Pet Média', 'Acolchoada com fundo impermeável', 75.00, 35, 12, '2026-03-05'),
+(61, 'Jogo de Lençol Casal 4 Peças', '100% Algodão 200 fios', 180.00, 30, 13, '2026-05-10'),
+(62, 'Toalha de Banho Gigante', 'Gramatura 500g/m² super absorvente', 45.00, 80, 13, '2026-05-15'),
+(63, 'Cobertor de Microfibra Casal', 'Macio e antialérgico', 90.00, 40, 13, '2026-05-20'),
+(64, 'Travesseiro Viscoelástico', 'Espuma de memória (Nasa)', 60.00, 60, 13, '2026-05-25'),
+(65, 'Kit de Panos de Prato', 'Pacote com 10 unidades em algodão', 35.00, 100, 13, '2026-06-01'),
+(66, 'Jogo de Chaves de Fenda', 'Kit com 6 peças variadas', 45.00, 50, 14, '2026-03-20'),
+(67, 'Furadeira de Impacto 500W', 'Com velocidade variável e reversível', 180.00, 25, 14, '2026-03-25'),
+(68, 'Martelo Unha com Cabo de Aço', 'Alta resistência para carpintaria', 35.00, 60, 14, '2026-03-30'),
+(69, 'Trena Emborrachada 5 Metros', 'Com trava e clipe para cinto', 20.00, 100, 14, '2026-04-05'),
+(70, 'Alicate Universal 8 Polegadas', 'Cabo isolado de alta durabilidade', 25.00, 70, 14, '2026-04-10'),
+(71, 'Relógio de Pulso Analógico', 'Pulseira de couro marrom', 250.00, 20, 15, '2026-05-15'),
+(72, 'Colar de Prata 925', 'Corrente com pingente de coração', 150.00, 35, 15, '2026-05-20'),
+(73, 'Par de Brincos de Pérola', 'Pérola sintética e base de ouro 18k', 120.00, 40, 15, '2026-05-25'),
+(74, 'Anel Solitário de Zircônia', 'Anel de noivado prateado', 95.00, 50, 15, '2026-06-01'),
+(75, 'Pulseira de Aço Inoxidável', 'Design minimalista masculino', 65.00, 60, 15, '2026-06-05'),
+(76, 'Console PlayStation 5', 'Edição com leitor de disco 1TB', 3800.00, 10, 16, '2026-01-10'),
+(77, 'Console Xbox Series X', 'Edição 1TB', 3700.00, 12, 16, '2026-01-15'),
+(78, 'Controle Sem Fio PS5', 'Controle DualSense Branco', 450.00, 30, 16, '2026-01-20'),
+(79, 'Headset Gamer com Microfone', 'Som surround 7.1 com LED', 220.00, 40, 16, '2026-01-25'),
+(80, 'Mousepad Gamer Extra Grande', 'Base emborrachada 90x40cm', 55.00, 80, 16, '2026-02-01'),
+(81, 'Termômetro Digital Infravermelho', 'Medição rápida na testa', 60.00, 70, 17, '2026-06-10'),
+(82, 'Balança Digital de Banheiro', 'Plataforma de vidro temperado', 50.00, 60, 17, '2026-06-15'),
+(83, 'Aparelho de Pressão Arterial', 'Medidor digital de pulso', 95.00, 40, 17, '2026-06-20'),
+(84, 'Whey Protein Concentrado 900g', 'Sabor Chocolate', 110.00, 80, 17, '2026-06-25'),
+(85, 'Multivitamínico 60 Cápsulas', 'Suplemento vitamínico de A a Z', 45.00, 120, 17, '2026-07-01'),
+(86, 'Kit Ferramentas Jardinagem', 'Conjunto com 3 mini pás', 35.00, 60, 18, '2026-04-10'),
+(87, 'Vaso de Planta de Cerâmica', 'Tamanho médio com prato', 45.00, 40, 18, '2026-04-15'),
+(88, 'Saco de Terra Vegetal 5kg', 'Pronto para uso com adubo natural', 15.00, 100, 18, '2026-04-20'),
+(89, 'Mangueira de Jardim 15m', 'Com esguicho e engate rápido', 65.00, 50, 18, '2026-04-25'),
+(90, 'Tesoura de Poda Profissional', 'Lâminas de aço inoxidável', 40.00, 30, 18, '2026-05-01'),
+(91, 'Violão Acústico Nylon', 'Tamanho padrão, acabamento natural', 450.00, 20, 19, '2026-03-05'),
+(92, 'Teclado Musical 61 Teclas', 'Com funções de aprendizado e ritmos', 780.00, 15, 19, '2026-03-10'),
+(93, 'Cabo de Áudio P10 3 Metros', 'Revestimento têxtil contra ruídos', 35.00, 100, 19, '2026-03-15'),
+(94, 'Afinador Digital de Clip', 'Compatível com violão, baixo e ukulelê', 45.00, 60, 19, '2026-03-20'),
+(95, 'Kit de Palhetas 10 Unidades', 'Espessuras variadas', 12.00, 200, 19, '2026-03-25'),
+(96, 'Geladeira Frost Free 400L', 'Refrigerador Inox 2 portas', 3200.00, 8, 20, '2026-02-10'),
+(97, 'Fogão 4 Bocas com Acendimento', 'Mesa de vidro temperado', 850.00, 15, 20, '2026-02-15'),
+(98, 'Micro-ondas 20 Litros', 'Painel digital espelhado', 550.00, 25, 20, '2026-02-20'),
+(99, 'Liquidificador Turbo 1000W', 'Copo de acrílico resistente 3L', 145.00, 40, 20, '2026-02-25'),
+(100, 'Aspirador de Pó Vertical', 'Potência de 1200W, filtro HEPA', 210.00, 30, 20, '2026-03-01');
 
-INSERT INTO clientes (nome, email, telefone, endereco, cidade, estado, cep, data_criacao) VALUES 
-('João Silva', 'joao@email.com', '(11)988453627', 'Rua A, 123', 'São Paulo', 'SP', '01234-567', '2026-01-12'),
-('Maria Santos', 'maria@email.com', '(92)986172564', 'Avenida Brasil, 45', 'Manaus', 'AM', '69099-120', '2026-05-17'),
-('Pedro Costa', 'pedro@email.com', '(11)988775644', 'Rua D.Pedro l, 789', 'São Paulo', 'SP', '30100-000', '2026-03-11');
+-- C) CLIENTES
+INSERT INTO clientes (id, nome, email, telefone, endereco, cidade, estado, cep, data_criacao) VALUES
+(1, 'João Silva', 'joao@email.com', '(11)988453627', 'Rua A, 123', 'São Paulo', 'SP', '01234-567', '2026-01-12'),
+(2, 'Maria Santos', 'maria@email.com', '(92)986172564', 'Avenida Brasil, 45', 'Manaus', 'AM', '69099-120', '2026-05-17'),
+(3, 'Pedro Costa', 'pedro@email.com', '(11)988775644', 'Rua D.Pedro l, 789', 'São Paulo', 'SP', '30100-000', '2026-03-11'),
+(4, 'Ana Oliveira', 'ana.oliveira@email.com', '(21)998765432', 'Avenida Copacabana, 100', 'Rio de Janeiro', 'RJ', '22020-001', '2026-01-05'),
+(5, 'Carlos Pereira', 'carlos.pereira@email.com', '(31)987654321', 'Rua da Bahia, 500', 'Belo Horizonte', 'MG', '30160-011', '2026-01-08'),
+(6, 'Fernanda Lima', 'fernanda.lima@email.com', '(41)999887766', 'Rua das Flores, 230', 'Curitiba', 'PR', '80010-000', '2026-01-15'),
+(7, 'Ricardo Gomes', 'ricardo.gomes@email.com', '(51)988776655', 'Avenida Borges de Medeiros, 800', 'Porto Alegre', 'RS', '90020-020', '2026-01-22'),
+(8, 'Juliana Alves', 'juliana.alves@email.com', '(61)999112233', 'Quadra 204 Sul, Lote 5', 'Brasília', 'DF', '70234-500', '2026-02-01'),
+(9, 'Marcos Souza', 'marcos.souza@email.com', '(71)988223344', 'Rua Chile, 15', 'Salvador', 'BA', '40020-000', '2026-02-04'),
+(10, 'Camila Rodrigues', 'camila.rodrigues@email.com', '(81)999334455', 'Avenida Boa Viagem, 3000', 'Recife', 'PE', '51020-001', '2026-02-10'),
+(11, 'Paulo Martins', 'paulo.martins@email.com', '(85)988445566', 'Rua Beira Mar, 450', 'Fortaleza', 'CE', '60165-121', '2026-02-18'),
+(12, 'Beatriz Barbosa', 'beatriz.barbosa@email.com', '(91)999556677', 'Avenida Nazaré, 210', 'Belém', 'PA', '66035-170', '2026-02-25'),
+(13, 'Lucas Fernandes', 'lucas.fernandes@email.com', '(92)988667788', 'Avenida Djalma Batista, 1500', 'Manaus', 'AM', '69050-010', '2026-03-02'),
+(14, 'Mariana Carvalho', 'mariana.carvalho@email.com', '(11)977778888', 'Avenida Paulista, 2000', 'São Paulo', 'SP', '01310-200', '2026-03-05'),
+(15, 'Rafael Rocha', 'rafael.rocha@email.com', '(19)998889900', 'Rua Francisco Glicério, 85', 'Campinas', 'SP', '13012-000', '2026-03-11'),
+(16, 'Aline Ribeiro', 'aline.ribeiro@email.com', '(27)999001122', 'Avenida Nossa Senhora, 400', 'Vitória', 'ES', '29050-335', '2026-03-15'),
+(17, 'Gabriel Mendes', 'gabriel.mendes@email.com', '(62)988112233', 'Avenida Goiás, 60', 'Goiânia', 'GO', '74005-010', '2026-03-20'),
+(18, 'Letícia Cardoso', 'leticia.cardoso@email.com', '(84)999223344', 'Via Costeira, 10', 'Natal', 'RN', '59090-001', '2026-03-26'),
+(19, 'Thiago Dias', 'thiago.dias@email.com', '(83)988334455', 'Avenida Cabo Branco, 900', 'João Pessoa', 'PB', '58045-010', '2026-04-02'),
+(20, 'Bruna Monteiro', 'bruna.monteiro@email.com', '(82)999445566', 'Avenida Álvaro Otacílio, 350', 'Maceió', 'AL', '57035-180', '2026-04-08'),
+(21, 'Diego Castro', 'diego.castro@email.com', '(79)988556677', 'Avenida Beira Mar, 120', 'Aracaju', 'SE', '49020-010', '2026-04-12'),
+(22, 'Amanda Nunes', 'amanda.nunes@email.com', '(65)999667788', 'Avenida Mato Grosso, 55', 'Cuiabá', 'MT', '78005-030', '2026-04-16'),
+(23, 'Rodrigo Teixeira', 'rodrigo.teixeira@email.com', '(67)988778899', 'Avenida Afonso Pena, 1100', 'Campo Grande', 'MS', '79002-070', '2026-04-20'),
+(24, 'Carolina Cavalcante', 'carolina.cavalcante@email.com', '(98)999889900', 'Avenida Litorânea, 20', 'São Luís', 'MA', '65076-170', '2026-04-25'),
+(25, 'Felipe Mendes', 'felipe.mendes@email.com', '(86)988990011', 'Avenida Frei Serafim, 80', 'Teresina', 'PI', '64000-020', '2026-05-01'),
+(26, 'Tatiane Moraes', 'tatiane.moraes@email.com', '(95)999001122', 'Avenida Ville Roy, 500', 'Boa Vista', 'RR', '69301-000', '2026-05-05'),
+(27, 'Leandro Ramos', 'leandro.ramos@email.com', '(96)988112233', 'Rua São José, 70', 'Macapá', 'AP', '68900-110', '2026-05-10'),
+(28, 'Vanessa Freitas', 'vanessa.freitas@email.com', '(69)999223344', 'Avenida Sete de Setembro, 200', 'Porto Velho', 'RO', '76801-096', '2026-05-14'),
+(29, 'Eduardo Farias', 'eduardo.farias@email.com', '(68)988334455', 'Avenida Brasil, 30', 'Rio Branco', 'AC', '69900-070', '2026-05-19'),
+(30, 'Patrícia Araújo', 'patricia.araujo@email.com', '(63)999445566', 'Avenida JK, 150', 'Palmas', 'TO', '77000-000', '2026-05-24'),
+(31, 'Gustavo Batista', 'gustavo.batista@email.com', '(11)988556677', 'Rua Augusta, 1000', 'São Paulo', 'SP', '01305-100', '2026-05-28'),
+(32, 'Renata Pires', 'renata.pires@email.com', '(21)999667788', 'Rua Visconde de Pirajá, 300', 'Rio de Janeiro', 'RJ', '22410-001', '2026-06-02'),
+(33, 'Marcelo Cunha', 'marcelo.cunha@email.com', '(31)988778899', 'Avenida Afonso Pena, 2000', 'Belo Horizonte', 'MG', '30130-005', '2026-06-07'),
+(34, 'Natália Machado', 'natalia.machado@email.com', '(41)999889900', 'Rua XV de Novembro, 150', 'Curitiba', 'PR', '80020-310', '2026-06-12'),
+(35, 'Henrique Borges', 'henrique.borges@email.com', '(51)988990011', 'Avenida Ipiranga, 450', 'Porto Alegre', 'RS', '90160-091', '2026-06-16'),
+(36, 'Daniela Viana', 'daniela.viana@email.com', '(61)999001122', 'SQS 105, Bloco B', 'Brasília', 'DF', '70344-020', '2026-06-20'),
+(37, 'Vitor Nogueira', 'vitor.nogueira@email.com', '(71)988112233', 'Avenida Oceânica, 600', 'Salvador', 'BA', '40170-010', '2026-06-25'),
+(38, 'Cláudia Moura', 'claudia.moura@email.com', '(81)999223344', 'Rua da Aurora, 100', 'Recife', 'PE', '50050-000', '2026-06-29'),
+(39, 'Leonardo Campos', 'leonardo.campos@email.com', '(85)988334455', 'Avenida Washington Soares, 800', 'Fortaleza', 'CE', '60810-300', '2026-07-03'),
+(40, 'Sílvia Peixoto', 'silvia.peixoto@email.com', '(91)999445566', 'Avenida Presidente Vargas, 350', 'Belém', 'PA', '66017-000', '2026-07-08'),
+(41, 'André Guimarães', 'andre.guimaraes@email.com', '(92)988556677', 'Avenida Coronel Teixeira, 500', 'Manaus', 'AM', '69037-000', '2026-07-12'),
+(42, 'Bianca Correia', 'bianca.correia@email.com', '(11)999667788', 'Avenida Brigadeiro Faria Lima, 1200', 'São Paulo', 'SP', '01451-001', '2026-07-16'),
+(43, 'Fernando Vieira', 'fernando.vieira@email.com', '(21)988778899', 'Rua Marquês de São Vicente, 250', 'Rio de Janeiro', 'RJ', '22451-041', '2026-07-20'),
+(44, 'Priscila Novaes', 'priscila.novaes@email.com', '(31)999889900', 'Avenida do Contorno, 6000', 'Belo Horizonte', 'MG', '30110-044', '2026-07-25'),
+(45, 'Samuel Lemos', 'samuel.lemos@email.com', '(41)988990011', 'Rua Marechal Deodoro, 300', 'Curitiba', 'PR', '80010-010', '2026-07-29'),
+(46, 'Jéssica Duarte', 'jessica.duarte@email.com', '(51)999001122', 'Rua dos Andradas, 800', 'Porto Alegre', 'RS', '90020-005', '2026-08-03'),
+(47, 'Roberto Pacheco', 'roberto.pacheco@email.com', '(61)988112233', 'CLN 202, Bloco A', 'Brasília', 'DF', '70832-515', '2026-08-08'),
+(48, 'Laura Rezende', 'laura.rezende@email.com', '(71)999223344', 'Rua Marquês de Caravelas, 100', 'Salvador', 'BA', '40140-240', '2026-08-12'),
+(49, 'Igor Macedo', 'igor.macedo@email.com', '(81)988334455', 'Avenida Conselheiro Aguiar, 1500', 'Recife', 'PE', '51020-020', '2026-08-17'),
+(50, 'Márcia Sales', 'marcia.sales@email.com', '(85)999445566', 'Avenida Dom Luís, 500', 'Fortaleza', 'CE', '60160-230', '2026-08-22');
 
--- ========================================
--- INSERIR MOVIMENTAÇÕES DE ESTOQUE
--- ========================================
+-- D) PEDIDOS
+INSERT INTO pedidos (id, cliente_id, data_pedido, status, valor_total, observacoes) VALUES
+(1, 1, '2026-01-27', 'Entregue', 2549.90, 'Pedido entregue no prazo'),
+(2, 1, '2026-01-31', 'Processando', 1200.00, 'Aguardando processamento'),
+(3, 1, '2026-03-30', 'Pendente', 0.00, 'Aguardando confirmação de pagamento'),
+(4, 2, '2026-04-25', 'Entregue', 89.90, 'Entregue com sucesso'),
+(5, 2, '2026-06-15', 'Entregue', 2749.00, 'Cliente satisfeito'),
+(6, 2, '2026-02-16', 'Processando', 1500.00, 'Em separação no almoxarifado'),
+(7, 3, '2026-06-16', 'Entregue', 139.80, 'Entregue conforme solicitado'),
+(8, 3, '2026-02-17', 'Pendente', 2525.00, 'Cliente solicitou adiamento'),
+(9, 3, '2026-02-10', 'Cancelado', 0.00, 'Cancelado por solicitação do cliente'),
+(10, 4, '2026-07-26 09:15:00', 'Entregue', 1250.00, 'Pedido recebido sem avarias'),
+(11, 12, '2026-07-26 14:30:00', 'Entregue', 89.90, 'Cliente solicitou entrega na portaria'),
+(12, 25, '2026-07-27 10:45:00', 'Entregue', 350.00, 'Entrega expressa realizada'),
+(13, 38, '2026-07-27 16:20:00', 'Entregue', 2100.00, 'Compra corporativa'),
+(14, 5, '2026-07-28 08:10:00', 'Entregue', 45.00, 'Tudo ok com a entrega'),
+(15, 42, '2026-07-28 11:55:00', 'Entregue', 780.00, 'Embalagem para presente'),
+(16, 19, '2026-07-29 13:40:00', 'Entregue', 15.50, 'Retirado na loja física'),
+(17, 33, '2026-07-29 17:05:00', 'Entregue', 250.00, 'Cliente satisfeito'),
+(18, 8, '2026-07-30 09:25:00', 'Entregue', 3200.00, 'Produto frágil, manuseio cuidadoso'),
+(19, 47, '2026-07-30 14:50:00', 'Entregue', 120.00, 'Entregue no endereço comercial'),
+(20, 15, '2026-07-31 10:15:00', 'Entregue', 65.00, 'Deixado com o vizinho (apto 402)'),
+(21, 28, '2026-07-31 15:35:00', 'Entregue', 450.00, 'Entrega realizada no final de semana'),
+(22, 2, '2026-08-01 11:20:00', 'Entregue', 299.90, 'Tudo certo'),
+(23, 50, '2026-08-01 16:45:00', 'Entregue', 85.00, 'Compra via aplicativo'),
+(24, 11, '2026-08-02 08:30:00', 'Entregue', 1450.00, 'Agendamento de montagem solicitado'),
+(25, 37, '2026-08-02 13:10:00', 'Entregue', 55.00, 'Cliente avaliou positivamente'),
+(26, 22, '2026-08-03 09:55:00', 'Entregue', 180.00, 'Recebido pela mãe do cliente'),
+(27, 41, '2026-08-03 15:25:00', 'Entregue', 3700.00, 'Console de video game entregue'),
+(28, 7, '2026-08-04 10:40:00', 'Entregue', 12.00, 'Retirada rápida na loja'),
+(29, 31, '2026-08-04 17:15:00', 'Entregue', 95.00, 'Entregue via correios'),
+(30, 18, '2026-08-05 08:50:00', 'Entregue', 25.00, 'Compra recorrente do cliente'),
+(31, 44, '2026-08-05 14:05:00', 'Entregue', 110.00, 'Deixado na recepção do prédio'),
+(32, 3, '2026-08-06 11:30:00', 'Entregue', 550.00, 'Tudo ok'),
+(33, 29, '2026-08-06 16:20:00', 'Entregue', 45.00, 'Sem observações'),
+(34, 14, '2026-08-07 09:15:00', 'Entregue', 35.00, 'Cliente usou cupom de desconto'),
+(35, 49, '2026-08-07 13:50:00', 'Entregue', 890.00, 'Móvel entregue desmontado'),
+(36, 6, '2026-08-08 10:05:00', 'Entregue', 150.00, 'Compra de brinquedo infantil'),
+(37, 35, '2026-08-08 15:45:00', 'Entregue', 22.90, 'Entregue no prazo'),
+(38, 21, '2026-08-09 11:10:00', 'Entregue', 290.00, 'Presente de dia dos pais'),
+(39, 45, '2026-08-09 16:30:00', 'Entregue', 60.00, 'Recebido pelo próprio cliente'),
+(40, 10, '2026-08-10 08:25:00', 'Entregue', 450.00, 'Tudo perfeito'),
+(41, 26, '2026-08-10 14:15:00', 'Entregue', 35.00, 'Compra de cabos e miudezas'),
+(42, 1, '2026-08-11 09:40:00', 'Entregue', 1200.00, 'Smartphone entregue lacrado'),
+(43, 48, '2026-08-11 15:55:00', 'Entregue', 25.90, 'Material escolar entregue'),
+(44, 17, '2026-08-12 10:30:00', 'Entregue', 180.00, 'Sem problemas na entrega'),
+(45, 39, '2026-08-12 17:00:00', 'Entregue', 75.00, 'Entrega via motoboy'),
+(46, 9, '2026-08-13 08:50:00', 'Entregue', 350.00, 'Produto chegou antes do prazo'),
+(47, 32, '2026-08-13 13:20:00', 'Entregue', 50.00, 'Cliente satisfeito'),
+(48, 24, '2026-08-14 11:05:00', 'Entregue', 210.00, 'Caixa um pouco amassada, mas produto intacto'),
+(49, 43, '2026-08-14 16:40:00', 'Entregue', 95.00, 'Cliente conferiu na hora'),
+(50, 13, '2026-08-15 09:15:00', 'Entregue', 65.00, 'Sem observações'),
+(51, 36, '2026-08-15 14:35:00', 'Entregue', 110.00, 'Roupa de cama entregue'),
+(52, 5, '2026-08-16 10:50:00', 'Entregue', 40.00, 'Deixado na portaria'),
+(53, 27, '2026-08-16 15:10:00', 'Entregue', 15.00, 'Adubo para jardim entregue'),
+(54, 20, '2026-08-17 08:45:00', 'Entregue', 85.00, 'Ração pet entregue'),
+(55, 40, '2026-08-17 13:30:00', 'Entregue', 120.00, 'Livros chegaram em perfeito estado'),
+(56, 16, '2026-08-18 11:20:00', 'Entregue', 3800.00, 'PS5 entregue com seguro de carga'),
+(57, 34, '2026-08-18 16:05:00', 'Entregue', 25.00, 'Tudo certo'),
+(58, 8, '2026-08-19 09:35:00', 'Entregue', 450.00, 'Violão entregue com case'),
+(59, 46, '2026-08-19 14:55:00', 'Entregue', 55.00, 'Produto de beleza entregue'),
+(60, 2, '2026-08-20 10:10:00', 'Processando', 145.00, 'Embalagem em andamento no CD'),
+(61, 15, '2026-08-20 15:40:00', 'Processando', 850.00, 'Aguardando transportadora coletar'),
+(62, 23, '2026-08-21 09:25:00', 'Processando', 20.00, 'Separando pedido na loja'),
+(63, 38, '2026-08-21 14:50:00', 'Processando', 120.00, 'Em rota de entrega (previsão hoje)'),
+(64, 11, '2026-08-22 11:05:00', 'Processando', 45.00, 'Embalando pedido'),
+(65, 42, '2026-08-22 16:30:00', 'Processando', 299.90, 'Aguardando coleta dos correios'),
+(66, 4, '2026-08-23 08:45:00', 'Processando', 65.00, 'Faturamento concluído, separando itens'),
+(67, 28, '2026-08-23 13:15:00', 'Processando', 180.00, 'Em trânsito para a filial do estado'),
+(68, 31, '2026-08-23 17:40:00', 'Processando', 35.00, 'Pedido urgente - Priorizar'),
+(69, 19, '2026-08-24 09:10:00', 'Processando', 250.00, 'Embalagem especial solicitada'),
+(70, 47, '2026-08-24 11:55:00', 'Processando', 90.00, 'Aguardando emissão de NF'),
+(71, 7, '2026-08-24 15:20:00', 'Processando', 110.00, 'Em separação no almoxarifado'),
+(72, 35, '2026-08-25 08:35:00', 'Processando', 450.00, 'Verificando disponibilidade de lote'),
+(73, 14, '2026-08-25 10:50:00', 'Processando', 60.00, 'Produto saindo da fábrica'),
+(74, 50, '2026-08-25 14:15:00', 'Processando', 25.00, 'Preparando pacote'),
+(75, 21, '2026-08-25 16:45:00', 'Processando', 150.00, 'Em conferência de qualidade'),
+(76, 9, '2026-08-26 08:20:00', 'Processando', 35.90, 'Início do processamento matinal'),
+(77, 30, '2026-08-26 09:45:00', 'Processando', 45.00, 'Pedido fresquinho, acabou de cair'),
+(78, 44, '2026-08-26 11:10:00', 'Processando', 120.00, 'Separando pedido no estoque central'),
+(79, 12, '2026-08-23 10:20:00', 'Pendente', 0.00, 'Aguardando compensação do boleto'),
+(80, 37, '2026-08-23 16:05:00', 'Pendente', 0.00, 'Aguardando pagamento via Pix'),
+(81, 5, '2026-08-24 09:30:00', 'Pendente', 0.00, 'Aguardando autorização do cartão de crédito'),
+(82, 25, '2026-08-24 14:45:00', 'Pendente', 0.00, 'Boleto gerado, vencimento amanhã'),
+(83, 41, '2026-08-24 17:15:00', 'Pendente', 0.00, 'Análise de fraude em andamento (valor alto)'),
+(84, 18, '2026-08-25 08:55:00', 'Pendente', 0.00, 'Aguardando confirmação do banco'),
+(85, 33, '2026-08-25 11:40:00', 'Pendente', 0.00, 'Aguardando pagamento do link de cobrança'),
+(86, 48, '2026-08-25 15:10:00', 'Pendente', 0.00, 'Cliente pediu para segurar o pedido até amanhã'),
+(87, 10, '2026-08-26 09:05:00', 'Pendente', 0.00, 'Aguardando Pix copiável ser pago'),
+(88, 27, '2026-08-26 10:25:00', 'Pendente', 0.00, 'Transação em análise pelo gateway'),
+(89, 39, '2026-08-26 12:15:00', 'Pendente', 0.00, 'Aguardando boleto'),
+(90, 1, '2026-08-26 13:40:00', 'Pendente', 0.00, 'Problema de saldo no cartão, cliente notificado'),
+(91, 22, '2026-07-28 10:15:00', 'Cancelado', 0.00, 'Cancelado por falta de pagamento do boleto'),
+(92, 45, '2026-07-30 16:40:00', 'Cancelado', 0.00, 'Cliente se arrependeu da compra'),
+(93, 3, '2026-08-02 09:50:00', 'Cancelado', 0.00, 'Compra duplicada no sistema'),
+(94, 17, '2026-08-05 14:25:00', 'Cancelado', 0.00, 'Suspeita de fraude, pedido bloqueado'),
+(95, 32, '2026-08-08 11:10:00', 'Cancelado', 0.00, 'Erro de integração, valor incorreto no site'),
+(96, 49, '2026-08-11 17:35:00', 'Cancelado', 0.00, 'Cliente solicitou cancelamento via SAC'),
+(97, 6, '2026-08-14 08:45:00', 'Cancelado', 0.00, 'Falta de estoque do fornecedor'),
+(98, 29, '2026-08-17 13:20:00', 'Cancelado', 0.00, 'Endereço fora da área de cobertura de entrega'),
+(99, 13, '2026-08-20 09:15:00', 'Cancelado', 0.00, 'Cartão recusado 3 vezes'),
+(100, 40, '2026-08-22 15:55:00', 'Cancelado', 0.00, 'Cliente desistiu por causa do prazo de entrega longo'),
+(101, 20, '2026-08-24 10:30:00', 'Cancelado', 0.00, 'Cancelamento automático pelo sistema (boleto vencido)'),
+(102, 36, '2026-08-25 14:10:00', 'Cancelado', 0.00, 'Compra não autorizada pelo titular do cartão');
 
+-- E) ITENS DOS PEDIDOS (Agora os IDs de 1 a 102 existem com certeza)
+INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
+(1, 1, 1, 2500.00, 2500.00),
+(1, 3, 1, 49.90, 49.90),
+(2, 2, 1, 1200.00, 1200.00),
+(4, 4, 1, 89.90, 89.90),
+(5, 1, 1, 2500.00, 2500.00),
+(5, 4, 5, 49.80, 249.00),
+(6, 2, 1, 1200.00, 1200.00),
+(6, 5, 12, 25.00, 300.00),
+(7, 3, 2, 49.90, 99.80),
+(7, 4, 1, 40.00, 40.00),
+(8, 1, 1, 2500.00, 2500.00),
+(8, 5, 1, 25.00, 25.00),
+(10, 15, 1, 1250.00, 1250.00),
+(11, 4, 1, 89.90, 89.90),
+(12, 91, 1, 350.00, 350.00),
+(13, 96, 1, 2100.00, 2100.00),
+(14, 7, 1, 45.00, 45.00),
+(15, 97, 1, 780.00, 780.00),
+(16, 35, 1, 15.50, 15.50),
+(17, 20, 1, 250.00, 250.00),
+(18, 100, 1, 3200.00, 3200.00),
+(19, 84, 1, 120.00, 120.00),
+(20, 26, 1, 65.00, 65.00),
+(21, 19, 1, 450.00, 450.00),
+(22, 8, 1, 299.90, 299.90),
+(23, 53, 1, 85.00, 85.00),
+(24, 16, 1, 1450.00, 1450.00),
+(25, 90, 1, 55.00, 55.00),
+(26, 67, 1, 180.00, 180.00),
+(27, 92, 1, 3700.00, 3700.00),
+(28, 99, 1, 12.00, 12.00),
+(29, 74, 1, 95.00, 95.00),
+(30, 40, 1, 25.00, 25.00),
+(31, 32, 1, 110.00, 110.00),
+(32, 18, 1, 550.00, 550.00),
+(33, 78, 1, 45.00, 45.00),
+(34, 43, 1, 35.00, 35.00),
+(35, 17, 1, 890.00, 890.00),
+(36, 72, 1, 150.00, 150.00),
+(37, 23, 1, 22.90, 22.90),
+(38, 21, 1, 290.00, 290.00),
+(39, 86, 1, 60.00, 60.00),
+(40, 27, 1, 450.00, 450.00),
+(41, 63, 1, 35.00, 35.00),
+(42, 2, 1, 1200.00, 1200.00),
+(43, 31, 1, 25.90, 25.90),
+(44, 28, 1, 180.00, 180.00),
+(45, 55, 1, 75.00, 75.00),
+(46, 36, 1, 350.00, 350.00),
+(47, 87, 1, 50.00, 50.00),
+(48, 100, 1, 210.00, 210.00),
+(49, 74, 1, 95.00, 95.00),
+(50, 75, 1, 65.00, 65.00),
+(51, 89, 1, 110.00, 110.00),
+(52, 39, 1, 40.00, 40.00),
+(53, 88, 1, 15.00, 15.00),
+(54, 53, 1, 85.00, 85.00),
+(55, 12, 1, 120.00, 120.00),
+(56, 91, 1, 3800.00, 3800.00),
+(57, 40, 1, 25.00, 25.00),
+(58, 96, 1, 450.00, 450.00),
+(59, 90, 1, 55.00, 55.00),
+(60, 99, 1, 145.00, 145.00),
+(61, 100, 1, 850.00, 850.00),
+(62, 69, 1, 20.00, 20.00),
+(63, 73, 1, 120.00, 120.00),
+(64, 66, 1, 45.00, 45.00),
+(65, 8, 1, 299.90, 299.90),
+(66, 75, 1, 65.00, 65.00),
+(67, 67, 1, 180.00, 180.00),
+(68, 37, 1, 35.00, 35.00),
+(69, 20, 1, 250.00, 250.00),
+(70, 58, 1, 90.00, 90.00),
+(71, 32, 1, 110.00, 110.00),
+(72, 19, 1, 450.00, 450.00),
+(73, 86, 1, 60.00, 60.00),
+(74, 40, 1, 25.00, 25.00),
+(75, 72, 1, 150.00, 150.00),
+(76, 38, 1, 35.90, 35.90),
+(77, 66, 1, 45.00, 45.00),
+(78, 54, 1, 120.00, 120.00),
+(79, 40, 5, 25.00, 125.00),
+(80, 74, 2, 95.00, 190.00),
+(81, 53, 1, 85.00, 85.00),
+(82, 19, 1, 450.00, 450.00),
+(83, 86, 2, 60.00, 120.00),
+(84, 75, 1, 65.00, 65.00),
+(85, 32, 1, 110.00, 110.00),
+(86, 43, 2, 35.00, 70.00),
+(87, 2, 1, 1200.00, 1200.00),
+(88, 67, 1, 180.00, 180.00),
+(89, 21, 1, 290.00, 290.00),
+(90, 36, 1, 350.00, 350.00),
+(91, 17, 1, 890.00, 890.00),
+(92, 16, 1, 1450.00, 1450.00),
+(93, 91, 1, 3800.00, 3800.00),
+(94, 96, 1, 450.00, 450.00),
+(95, 73, 1, 120.00, 120.00),
+(96, 8, 1, 299.90, 299.90),
+(97, 31, 2, 25.90, 51.80),
+(98, 72, 1, 150.00, 150.00),
+(99, 39, 1, 40.00, 40.00),
+(100, 28, 1, 180.00, 180.00),
+(101, 90, 1, 55.00, 55.00),
+(102, 26, 1, 65.00, 65.00);
+
+-- F) CONTROLE DE ESTOQUE
 INSERT INTO controle_estoque (produto_id, quantidade_anterior, quantidade_nova, tipo_movimento, data_movimento, observacoes) VALUES
 (1, 0, 10, 'Entrada', '2026-01-15 09:30:00',  'Entrada inicial de notebooks'),
 (2, 0, 15, 'Entrada', '2026-01-15 14:20:00' ,'Entrada inicial de smartphones'),
@@ -133,44 +496,91 @@ INSERT INTO controle_estoque (produto_id, quantidade_anterior, quantidade_nova, 
 (3, 49, 47, 'Saída', '2026-06-15 09:30:00','Venda - Pedido 3 - Pedro Costa (2 unidades)'),
 (4, 29, 28, 'Saída', '2026-02-16 08:15:00','Venda - Pedido 3 - Pedro Costa'),
 (5, 100, 99, 'Saída','2026-06-16 16:30:00', 'Venda - Pedido 4 - João Silva'),
-(2, 14, 15, 'Ajuste', '2026-07-17 11:45:00', 'Devolução de smartphone - cliente insatisfeito');
-
--- ========================================
--- INSERIR PEDIDOS
--- ========================================
-INSERT INTO pedidos (cliente_id, data_pedido, status, valor_total, observacoes) VALUES 
-(1, '2026-01-27', 'Entregue', 2549.90, 'Pedido entregue no prazo'), 
-(1, '2026-01-31', 'Processando', 1200.00, 'Aguardando processamento'), 
-(1, '2026-03-30', 'Pendente', 0.00, 'Aguardando confirmação de pagamento'),
-(2, '2026-04-25', 'Entregue', 89.90, 'Entregue com sucesso'), 
-(2, '2026-06-15', 'Entregue', 2749.00, 'Cliente satisfeito'), 
-(2, '2026-02-16', 'Processando', 1500.00, 'Em separação no almoxarifado'),
-(3, '2026-06-16', 'Entregue', 139.80, 'Entregue conforme solicitado'), 
-(3, '2026-02-17', 'Pendente', 2525.00, 'Cliente solicitou adiamento'), 
-(3, '2026-02-10', 'Cancelado', 0.00, 'Cancelado por solicitação do cliente');
-
-
-
--- ========================================
--- INSERIR ITENS DOS PEDIDOS
--- ========================================
-
-INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
-(1, 1, 1, 2500.00, 2500.00),
-(1, 3, 1, 49.90, 49.90),
-(2, 2, 1, 1200.00, 1200.00),
-(2, 4, 5, 49.80,249.00 ),
-(3, 3, 2, 49.90, 99.80),
-(3, 4, 1, 40.00, 40.00),
-(4, 5, 1, 25.00, 25.00);
-
-INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
-(2, 2, 1, 1200.00, 1200.00),
-(2, 4, 1, 49.80, 49.80);
-
-INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
-(3, 3, 2, 49.90, 99.80),
-(3, 4, 1, 40.00, 40.00);
-
-INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
-(4, 5, 1, 25.00, 25.00);
+(2, 14, 15, 'Ajuste', '2026-07-17 11:45:00', 'Devolução de smartphone - cliente insatisfeito'),
+(7, 10, 40, 'Entrada', '2026-07-26 09:15:00', 'Recebimento de fornecedor NF-1024'),
+(15, 20, 70, 'Entrada', '2026-07-27 10:30:00', 'Reposição mensal de estoque'),
+(22, 5, 25, 'Entrada', '2026-07-27 14:45:00', 'Recebimento de fornecedor NF-1025'),
+(34, 12, 62, 'Entrada', '2026-07-28 08:20:00', 'Entrada de lote promocional'),
+(48, 8, 38, 'Entrada', '2026-07-28 16:10:00', 'Recebimento de fornecedor NF-1030'),
+(55, 30, 80, 'Entrada', '2026-07-29 09:00:00', 'Reposição mensal de estoque'),
+(61, 15, 65, 'Entrada', '2026-07-30 11:30:00', 'Recebimento de fornecedor NF-1033'),
+(72, 0, 50, 'Entrada', '2026-07-31 15:40:00', 'Entrada de novo lote'),
+(88, 25, 125, 'Entrada', '2026-08-01 10:15:00', 'Recebimento de fornecedor NF-1040'),
+(95, 10, 40, 'Entrada', '2026-08-02 08:50:00', 'Reposição semanal'),
+(6, 12, 42, 'Entrada', '2026-08-03 13:20:00', 'Recebimento de fornecedor NF-1045'),
+(18, 50, 150, 'Entrada', '2026-08-04 09:10:00', 'Compra em atacado para promoção'),
+(27, 5, 35, 'Entrada', '2026-08-05 14:00:00', 'Reposição de estoque urgente'),
+(39, 40, 140, 'Entrada', '2026-08-06 11:45:00', 'Recebimento de fornecedor NF-1052'),
+(44, 20, 70, 'Entrada', '2026-08-07 10:30:00', 'Reposição mensal de estoque'),
+(51, 10, 60, 'Entrada', '2026-08-08 16:20:00', 'Recebimento de fornecedor NF-1058'),
+(68, 15, 45, 'Entrada', '2026-08-09 09:05:00', 'Entrada de lote atrasado'),
+(75, 30, 130, 'Entrada', '2026-08-10 14:15:00', 'Recebimento de fornecedor NF-1065'),
+(82, 0, 40, 'Entrada', '2026-08-11 11:50:00', 'Reposição após ruptura de estoque'),
+(99, 10, 30, 'Entrada', '2026-08-12 15:35:00', 'Recebimento de fornecedor NF-1070'),
+(11, 25, 75, 'Entrada', '2026-08-13 08:40:00', 'Reposição quinzenal'),
+(23, 18, 68, 'Entrada', '2026-08-14 10:25:00', 'Recebimento de fornecedor NF-1075'),
+(37, 5, 55, 'Entrada', '2026-08-15 13:10:00', 'Entrada de lote promocional'),
+(49, 40, 100, 'Entrada', '2026-08-16 16:55:00', 'Reposição mensal de estoque'),
+(58, 20, 60, 'Entrada', '2026-08-17 09:30:00', 'Recebimento de fornecedor NF-1082'),
+(64, 15, 65, 'Entrada', '2026-08-18 14:40:00', 'Entrada de estoque extra'),
+(77, 35, 85, 'Entrada', '2026-08-19 11:15:00', 'Recebimento de fornecedor NF-1090'),
+(85, 10, 50, 'Entrada', '2026-08-20 15:20:00', 'Reposição mensal de estoque'),
+(91, 5, 25, 'Entrada', '2026-08-21 08:05:00', 'Recebimento de fornecedor NF-1095'),
+(100, 12, 42, 'Entrada', '2026-08-22 10:45:00', 'Entrada de lote para Black Friday antecipada'),
+(7, 40, 39, 'Saída', '2026-07-26 14:20:00', 'Venda - Pedido E-commerce #5001'),
+(15, 70, 68, 'Saída', '2026-07-27 16:15:00', 'Venda - Pedido E-commerce #5002'),
+(22, 25, 20, 'Saída', '2026-07-28 09:40:00', 'Venda corporativa (5 unidades)'),
+(34, 62, 61, 'Saída', '2026-07-28 11:10:00', 'Venda - Pedido E-commerce #5003'),
+(48, 38, 36, 'Saída', '2026-07-29 15:30:00', 'Venda - Pedido E-commerce #5004'),
+(55, 80, 77, 'Saída', '2026-07-30 10:05:00', 'Venda balcão loja física'),
+(61, 65, 64, 'Saída', '2026-07-31 13:45:00', 'Venda - Pedido E-commerce #5005'),
+(72, 50, 45, 'Saída', '2026-08-01 16:50:00', 'Venda atacado loja física'),
+(88, 125, 124, 'Saída', '2026-08-02 09:20:00', 'Venda - Pedido E-commerce #5006'),
+(95, 40, 39, 'Saída', '2026-08-02 11:35:00', 'Venda - Pedido E-commerce #5007'),
+(6, 42, 41, 'Saída', '2026-08-03 14:10:00', 'Venda balcão loja física'),
+(18, 150, 140, 'Saída', '2026-08-04 10:25:00', 'Venda corporativa (10 unidades)'),
+(27, 35, 34, 'Saída', '2026-08-05 15:40:00', 'Venda - Pedido E-commerce #5008'),
+(39, 140, 138, 'Saída', '2026-08-06 09:55:00', 'Venda - Pedido E-commerce #5009'),
+(44, 70, 69, 'Saída', '2026-08-07 13:15:00', 'Venda balcão loja física'),
+(51, 60, 57, 'Saída', '2026-08-08 11:20:00', 'Venda - Pedido E-commerce #5010'),
+(68, 45, 44, 'Saída', '2026-08-09 14:45:00', 'Venda balcão loja física'),
+(75, 130, 125, 'Saída', '2026-08-10 16:30:00', 'Venda corporativa (5 unidades)'),
+(82, 40, 39, 'Saída', '2026-08-11 08:50:00', 'Venda - Pedido E-commerce #5011'),
+(99, 30, 29, 'Saída', '2026-08-12 10:10:00', 'Venda - Pedido E-commerce #5012'),
+(11, 75, 73, 'Saída', '2026-08-13 14:25:00', 'Venda - Pedido E-commerce #5013'),
+(23, 68, 67, 'Saída', '2026-08-14 16:05:00', 'Venda balcão loja física'),
+(37, 55, 52, 'Saída', '2026-08-15 09:15:00', 'Venda - Pedido E-commerce #5014'),
+(49, 100, 99, 'Saída', '2026-08-16 11:40:00', 'Venda balcão loja física'),
+(58, 60, 59, 'Saída', '2026-08-17 13:50:00', 'Venda - Pedido E-commerce #5015'),
+(64, 65, 63, 'Saída', '2026-08-18 15:20:00', 'Venda - Pedido E-commerce #5016'),
+(77, 85, 84, 'Saída', '2026-08-19 10:35:00', 'Venda balcão loja física'),
+(85, 50, 48, 'Saída', '2026-08-20 14:10:00', 'Venda corporativa (2 unidades)'),
+(91, 25, 24, 'Saída', '2026-08-21 16:45:00', 'Venda - Pedido E-commerce #5017'),
+(100, 42, 41, 'Saída', '2026-08-22 09:30:00', 'Venda balcão loja física'),
+(7, 39, 38, 'Saída', '2026-08-22 11:55:00', 'Venda - Pedido E-commerce #5018'),
+(15, 68, 67, 'Saída', '2026-08-23 08:20:00', 'Venda - Pedido E-commerce #5019'),
+(22, 20, 19, 'Saída', '2026-08-23 10:45:00', 'Venda balcão loja física'),
+(34, 61, 60, 'Saída', '2026-08-23 14:30:00', 'Venda - Pedido E-commerce #5020'),
+(48, 36, 35, 'Saída', '2026-08-24 09:10:00', 'Venda balcão loja física'),
+(55, 77, 75, 'Saída', '2026-08-24 11:25:00', 'Venda corporativa (2 unidades)'),
+(61, 64, 63, 'Saída', '2026-08-24 15:40:00', 'Venda - Pedido E-commerce #5021'),
+(72, 45, 44, 'Saída', '2026-08-25 08:50:00', 'Venda - Pedido E-commerce #5022'),
+(88, 124, 120, 'Saída', '2026-08-25 10:15:00', 'Venda atacado loja física'),
+(95, 39, 38, 'Saída', '2026-08-25 14:05:00', 'Venda - Pedido E-commerce #5023'),
+(6, 41, 40, 'Saída', '2026-08-25 16:30:00', 'Venda balcão loja física'),
+(18, 140, 138, 'Saída', '2026-08-26 09:20:00', 'Venda - Pedido E-commerce #5024'),
+(27, 34, 33, 'Saída', '2026-08-26 11:45:00', 'Venda balcão loja física'),
+(39, 138, 137, 'Saída', '2026-08-26 13:10:00', 'Venda - Pedido E-commerce #5025'),
+(44, 69, 68, 'Saída', '2026-08-26 15:55:00', 'Venda balcão loja física'),
+(15, 67, 68, 'Ajuste', '2026-07-29 08:30:00', 'Devolução de cliente - Produto intacto (E-commerce #5002)'),
+(22, 19, 18, 'Ajuste', '2026-07-31 17:00:00', 'Descarte por avaria na embalagem durante manuseio'),
+(34, 60, 59, 'Ajuste', '2026-08-05 18:30:00', 'Ajuste após contagem cíclica semanal - Faltante'),
+(48, 35, 36, 'Ajuste', '2026-08-08 09:00:00', 'Sobras encontradas no estoque durante inventário'),
+(55, 75, 74, 'Ajuste', '2026-08-12 16:45:00', 'Produto danificado por umidade - Descartado'),
+(61, 63, 64, 'Ajuste', '2026-08-15 10:20:00', 'Devolução de loja física - Troca por outro modelo'),
+(72, 44, 43, 'Ajuste', '2026-08-18 11:30:00', 'Retirada de produto para uso como mostruário da loja'),
+(88, 120, 119, 'Ajuste', '2026-08-20 14:50:00', 'Ajuste após contagem cíclica semanal - Faltante'),
+(95, 38, 39, 'Ajuste', '2026-08-22 17:15:00', 'Estorno de venda não concretizada no sistema'),
+(6, 40, 39, 'Ajuste', '2026-08-24 09:40:00', 'Retirada para testes de qualidade internos'),
+(18, 138, 139, 'Ajuste', '2026-08-25 15:10:00', 'Devolução de cliente - Arrependimento de compra'),
+(27, 33, 32, 'Ajuste', '2026-08-26 17:45:00', 'Ajuste manual de saldo no fechamento do mês');

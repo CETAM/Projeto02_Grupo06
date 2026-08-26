@@ -84,6 +84,12 @@
 
             </div>
 
+            <!-- MENSAGEM DE ERRO (validação, e-mail duplicado, exclusão bloqueada) -->
+            <div th:if="${erro != null}" class="alert-inline alert-inline-danger">
+                <i class="bi bi-x-circle"></i>
+                <span th:text="${erro}"></span>
+            </div>
+
             <!-- TABELA -->
             <div class="app-table-card">
 

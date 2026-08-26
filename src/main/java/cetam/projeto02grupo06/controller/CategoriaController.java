@@ -2,13 +2,17 @@ package cetam.projeto02grupo06.controller;
 
 import cetam.projeto02grupo06.model.Categoria;
 import cetam.projeto02grupo06.service.CategoriaService;
+import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/categorias")
@@ -58,9 +62,23 @@ public class CategoriaController {
 
     @PostMapping("/salvar")
     public String salvar(
-            @ModelAttribute Categoria categoria) {
+            @Valid @ModelAttribute Categoria categoria,
+            BindingResult resultado,
+            RedirectAttributes redirectAttributes) {
 
-        categoriaService.salvar(categoria);
+        if (resultado.hasErrors()) {
+            String mensagens = resultado.getFieldErrors().stream()
+                    .map(erro -> erro.getDefaultMessage())
+                    .collect(Collectors.joining(" "));
+            redirectAttributes.addFlashAttribute("erro", mensagens);
+            return "redirect:/categorias";
+        }
+
+        try {
+            categoriaService.salvar(categoria);
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("erro", "Já existe uma categoria cadastrada com esse nome.");
+        }
 
         return "redirect:/categorias";
     }

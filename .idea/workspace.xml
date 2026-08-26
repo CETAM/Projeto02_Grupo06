@@ -7,6 +7,22 @@
     <list default="true" id="a5607897-294a-4a90-9fd4-ff885779a4b1" name="Changes" comment="Adicionar controle de estoque">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/grupo06_db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/grupo06_db.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/CategoriaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/CategoriaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/ClienteController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/ClienteController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/ProdutoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/ProdutoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/RelatorioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/controller/RelatorioController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/model/Categoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/model/Categoria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/model/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/repository/ItemPedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/repository/ItemPedidoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/repository/PedidoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/repository/PedidoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/ClienteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/ClienteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/ProdutoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cetam/projeto02grupo06/service/ProdutoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Clientes/lista.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/Clientes/lista.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Pedidos/lista.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/Pedidos/lista.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Produtos/lista.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/Produtos/lista.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Relatorios/vendas-periodo.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/Relatorios/vendas-periodo.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/cetam/projeto02grupo06/Projeto02Grupo06ApplicationTests.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,35 +70,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.Projeto02Grupo06Application.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Projects/Projeto02_Grupo06",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Projeto02Grupo06Application.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Projects/Projeto02_Grupo06&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.SQL&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Projeto02Grupo06Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />

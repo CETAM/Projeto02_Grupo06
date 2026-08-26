@@ -20,4 +20,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     @Query("SELECT p FROM Pedido p WHERE p.dataPedido BETWEEN :inicio AND :fim")
     List<Pedido> buscarVendasPorPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
+    // Derived query: conta quantos pedidos um cliente possui (usado para bloquear exclusão indevida)
+    long countByClienteId(Integer clienteId);
+
 }

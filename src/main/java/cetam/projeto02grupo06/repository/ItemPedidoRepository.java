@@ -11,4 +11,7 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Integer>
 
     List<ItemPedido> findByPedidoId(Integer pedidoId);
 
+    // Derived query: conta em quantos itens de pedido um produto aparece (usado para bloquear exclusão indevida)
+    long countByProdutoId(Integer produtoId);
+
 }

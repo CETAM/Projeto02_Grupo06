@@ -1,6 +1,7 @@
 package cetam.projeto02grupo06.service;
 
 import cetam.projeto02grupo06.model.Produto;
+import cetam.projeto02grupo06.repository.ItemPedidoRepository;
 import cetam.projeto02grupo06.repository.ProdutoRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,11 @@ import java.util.List;
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, ItemPedidoRepository itemPedidoRepository) {
         this.produtoRepository = produtoRepository;
+        this.itemPedidoRepository = itemPedidoRepository;
     }
 
     public List<Produto> listarTodos() {
@@ -50,6 +53,12 @@ public class ProdutoService {
     }
 
     public void excluir(Integer id) {
+        long vendasVinculadas = itemPedidoRepository.countByProdutoId(id);
+        if (vendasVinculadas > 0) {
+            throw new IllegalStateException(
+                    "Não é possível excluir este produto: ele já foi vendido em "
+                            + vendasVinculadas + " pedido(s).");
+        }
         produtoRepository.deleteById(id);
     }
 }
