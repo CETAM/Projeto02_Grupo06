@@ -123,6 +123,7 @@
                 <select id="filtroStatus" class="list-filter-select" onchange="filtrarPedidos()">
                     <option value="">Todos os status</option>
                     <option value="Pendente">Pendente</option>
+                    <option value="Processando">Processando</option>
                     <option value="Confirmado">Confirmado</option>
                     <option value="Enviado">Enviado</option>
                     <option value="Entregue">Entregue</option>
@@ -179,9 +180,11 @@
 
                             <td>
                                 <span th:if="${pedido.status == 'Pendente'}" class="pill pill-warning" th:text="${pedido.status}"></span>
-                                <span th:if="${pedido.status == 'Confirmado' or pedido.status == 'Enviado'}" class="pill pill-info" th:text="${pedido.status}"></span>
+                                <span th:if="${pedido.status == 'Processando' or pedido.status == 'Confirmado' or pedido.status == 'Enviado'}" class="pill pill-info" th:text="${pedido.status}"></span>
                                 <span th:if="${pedido.status == 'Entregue'}" class="pill pill-success" th:text="${pedido.status}"></span>
                                 <span th:if="${pedido.status == 'Cancelado'}" class="pill pill-danger" th:text="${pedido.status}"></span>
+                                <span th:if="${pedido.status != 'Pendente' and pedido.status != 'Processando' and pedido.status != 'Confirmado' and pedido.status != 'Enviado' and pedido.status != 'Entregue' and pedido.status != 'Cancelado'}"
+                                      class="pill" th:text="${pedido.status}"></span>
                             </td>
 
                             <td>
@@ -297,6 +300,7 @@
                             <label class="form-label">Status</label>
                             <select class="form-control" id="pedidoStatus" name="status">
                                 <option value="Pendente">Pendente</option>
+                                <option value="Processando">Processando</option>
                                 <option value="Confirmado">Confirmado</option>
                                 <option value="Enviado">Enviado</option>
                                 <option value="Entregue">Entregue</option>

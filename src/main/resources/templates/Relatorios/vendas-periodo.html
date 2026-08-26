@@ -115,8 +115,14 @@
 
             </form>
 
+            <!-- AVISO: INTERVALO DE DATAS INVÁLIDO -->
+            <div th:if="${erroPeriodo != null}" class="alert-inline alert-inline-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${erroPeriodo}"></span>
+            </div>
+
             <!-- ESTADO INICIAL: nenhum período filtrado ainda -->
-            <div th:if="${pedidos == null}" class="alert-inline">
+            <div th:if="${pedidos == null and erroPeriodo == null}" class="alert-inline">
                 <i class="bi bi-info-circle"></i>
                 <span>Selecione um período acima para consultar as vendas realizadas.</span>
             </div>

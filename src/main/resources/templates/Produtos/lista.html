@@ -85,6 +85,12 @@
 
             </div>
 
+            <!-- MENSAGEM DE ERRO (ex: exclusão bloqueada por vendas vinculadas) -->
+            <div th:if="${erro != null}" class="alert-inline alert-inline-danger">
+                <i class="bi bi-x-circle"></i>
+                <span th:text="${erro}"></span>
+            </div>
+
             <!-- ALERTA: SEM CATEGORIAS CADASTRADAS -->
             <div th:if="${#lists.isEmpty(categorias)}" class="alert-inline">
                 <i class="bi bi-exclamation-triangle"></i>

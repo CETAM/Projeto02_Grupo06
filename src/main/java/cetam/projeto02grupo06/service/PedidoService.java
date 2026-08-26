@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PedidoService {
@@ -52,12 +54,27 @@ public class PedidoService {
      * - Cada item novo é validado contra o estoque disponível; se faltar produto,
      *   a operação inteira é revertida (transação) e uma mensagem clara é lançada.
      * - O valor total é sempre recalculado no servidor, nunca confiado ao formulário.
+     * - O pedido é salvo em uma ÚNICA chamada a save(), com o valorTotal já
+     *   calculado antes do INSERT. Isso evita um segundo save() (UPDATE) logo
+     *   em seguida, que sobrescreveria com null o "data_entrega" preenchido
+     *   pelo trigger trg_set_data_entrega do banco (esse era o TC-04 apontado
+     *   pela suíte de testes).
      */
     @Transactional
     public Pedido salvar(Pedido dadosPedido, List<ItemPedidoInput> itensInput) {
 
         if (itensInput == null || itensInput.isEmpty()) {
             throw new IllegalArgumentException("O pedido precisa ter ao menos um item.");
+        }
+
+        // Agrupa itens repetidos do mesmo produto em uma única linha, somando
+        // as quantidades, em vez de criar itens de pedido duplicados (TC-18)
+        Map<Integer, Integer> quantidadePorProduto = new LinkedHashMap<>();
+        for (ItemPedidoInput itemInput : itensInput) {
+            if (itemInput.produtoId() == null || itemInput.quantidade() == null || itemInput.quantidade() <= 0) {
+                throw new IllegalArgumentException("Item de pedido inválido.");
+            }
+            quantidadePorProduto.merge(itemInput.produtoId(), itemInput.quantidade(), Integer::sum);
         }
 
         Pedido pedido;
@@ -89,47 +106,58 @@ public class PedidoService {
         pedido.setDataEntrega(dadosPedido.getDataEntrega());
         pedido.setObservacoes(dadosPedido.getObservacoes());
 
-        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        // Valida estoque e monta os itens ANTES de persistir o pedido,
+        // para poder gravar o valorTotal já correto num único save()
+        record ItemPreparado(Produto produto, Integer quantidade, BigDecimal subtotal) {}
 
-        List<ItemPedido> novosItens = new ArrayList<>();
+        List<ItemPreparado> itensPreparados = new ArrayList<>();
         BigDecimal valorTotal = BigDecimal.ZERO;
 
-        for (ItemPedidoInput itemInput : itensInput) {
+        for (Map.Entry<Integer, Integer> entrada : quantidadePorProduto.entrySet()) {
 
-            if (itemInput.produtoId() == null || itemInput.quantidade() == null || itemInput.quantidade() <= 0) {
-                throw new IllegalArgumentException("Item de pedido inválido.");
-            }
-
-            Produto produto = produtoRepository.findById(itemInput.produtoId())
+            Produto produto = produtoRepository.findById(entrada.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
 
-            if (produto.getQuantidadeEstoque() < itemInput.quantidade()) {
+            Integer quantidade = entrada.getValue();
+
+            if (produto.getQuantidadeEstoque() < quantidade) {
                 throw new IllegalStateException(
                         "Estoque insuficiente para \"" + produto.getNome() + "\". Disponível: "
                                 + produto.getQuantidadeEstoque() + " un.");
             }
 
-            BigDecimal precoUnitario = produto.getPreco();
-            BigDecimal subtotal = precoUnitario.multiply(BigDecimal.valueOf(itemInput.quantidade()));
+            BigDecimal subtotal = produto.getPreco().multiply(BigDecimal.valueOf(quantidade));
+
+            itensPreparados.add(new ItemPreparado(produto, quantidade, subtotal));
+            valorTotal = valorTotal.add(subtotal);
+        }
+
+        pedido.setValorTotal(valorTotal);
+
+        // Único save(): o INSERT já sai com valorTotal correto, sem precisar
+        // de um segundo save() que apagaria o data_entrega gerado pelo trigger
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+
+        List<ItemPedido> novosItens = new ArrayList<>();
+
+        for (ItemPreparado itemPreparado : itensPreparados) {
 
             ItemPedido item = new ItemPedido();
             item.setPedido(pedidoSalvo);
-            item.setProduto(produto);
-            item.setQuantidade(itemInput.quantidade());
-            item.setPrecoUnitario(precoUnitario);
-            item.setSubtotal(subtotal);
-
+            item.setProduto(itemPreparado.produto());
+            item.setQuantidade(itemPreparado.quantidade());
+            item.setPrecoUnitario(itemPreparado.produto().getPreco());
+            item.setSubtotal(itemPreparado.subtotal());
             novosItens.add(item);
-            valorTotal = valorTotal.add(subtotal);
 
-            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - itemInput.quantidade());
-            produtoRepository.save(produto);
+            itemPreparado.produto().setQuantidadeEstoque(
+                    itemPreparado.produto().getQuantidadeEstoque() - itemPreparado.quantidade());
+            produtoRepository.save(itemPreparado.produto());
         }
 
         itemPedidoRepository.saveAll(novosItens);
 
-        pedidoSalvo.setValorTotal(valorTotal);
-        return pedidoRepository.save(pedidoSalvo);
+        return pedidoSalvo;
     }
 
     @Transactional

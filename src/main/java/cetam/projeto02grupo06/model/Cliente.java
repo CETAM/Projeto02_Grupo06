@@ -1,6 +1,8 @@
 package cetam.projeto02grupo06.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
@@ -12,9 +14,12 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "O nome é obrigatório.")
     @Column(nullable = false, length = 150)
     private String nome;
 
+    @NotBlank(message = "O e-mail é obrigatório.")
+    @Email(message = "Informe um e-mail válido.")
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
@@ -102,7 +107,7 @@ public class Cliente {
     }
 
     public void setEstado(String estado) {
-        this.estado = estado;
+        this.estado = estado == null ? null : estado.trim().toUpperCase();
     }
 
     public String getCep() {

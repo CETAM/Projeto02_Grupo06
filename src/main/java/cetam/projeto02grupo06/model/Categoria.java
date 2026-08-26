@@ -1,6 +1,7 @@
 package cetam.projeto02grupo06.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "O nome da categoria é obrigatório.")
     @Column(nullable = false, unique = true, length = 100)
     private String nome;
 
