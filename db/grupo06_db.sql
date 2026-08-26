@@ -173,17 +173,4 @@ INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, sub
 (3, 4, 1, 40.00, 40.00);
 
 INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario, subtotal) VALUES
-(4, 5, 1, 25.00, 25.00);*/
-
-
-
-
-
-
-
-
-
-
-
-
-
+(4, 5, 1, 25.00, 25.00);
